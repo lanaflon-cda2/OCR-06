@@ -7,11 +7,10 @@ import java.util.List;
 @Getter
 @Setter
 public class UserAccount {
-    List<BankAccount> bankAccounts;
     String email;
     String name;
-    String password;
-    String accountlog;
+    double moneyAmount;
+    List<BankAccount> bankAccounts;
     List<String> connectionEmails;
     List<Transaction> historicTransactions;
 }
