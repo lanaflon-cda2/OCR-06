@@ -17,7 +17,7 @@ public class InteractiveShell {
         System.out.println("Welcome to Transferapp by Paymybuddy");
         while (continueApp) {
             loadWelcomeMenue();
-            int option = inputReaderUtil.readSelection();
+            int option = inputReaderUtil.readInt("Please select an option.");
             switch (option) {
                 case 1: {
                     isconnected = accountService.getConnection();
@@ -39,17 +39,37 @@ public class InteractiveShell {
     public static void loadAccountInterface() {
         while (isconnected) {
             loadAccountMenue();
-            int option = inputReaderUtil.readSelection();
+            int option = inputReaderUtil.readInt("Please select an option.");
             switch (option) {
                 case 1: {
                     accountService.addABuddy();
                     break;
                 }
+                case 2: {
+                    accountService.addABankAccount();
+                    break;
+                }
+                case 3: {
+                    accountService.depositMoney();
+                    break;
+                }
                 case 4: {
-                    accountService.getAccountInfo();
+                    accountService.sendMoneyToARelative();
+                    break;
+                }
+                case 5: {
+                    accountService.sendMoneyToBankAccount();
                     break;
                 }
                 case 6: {
+                    accountService.getAccountInfo();
+                    break;
+                }
+                case 7: {
+                    accountService.getTransactionInfo();
+                    break;
+                }
+                case 8: {
                     System.out.println("You are disconnected");
 					isconnected = false;
 					loadWelcomeInterface();
@@ -62,18 +82,18 @@ public class InteractiveShell {
     }
 
     private static void loadWelcomeMenue() {
-        System.out.println("Please select an option.");
         System.out.println("1: enter your email and password");
         System.out.println("2: Shutdown System");
     }
 
     private static void loadAccountMenue() {
-        System.out.println("Please select an option.");
         System.out.println("1: Add a buddy on my list");
-        System.out.println("2: Transfer money on my account");
-        System.out.println("3: Send money to my friends");
-        System.out.println("4: See my account info");
-        System.out.println("5: See all of my transactions");
-        System.out.println("6: Disconnect");
+        System.out.println("2: Add a bank account");
+        System.out.println("3: Deposit money on my account");
+        System.out.println("4: Send money to my friends");
+        System.out.println("5: Send money to my bank account");
+        System.out.println("6: See my account info");
+        System.out.println("7: See all of my transactions");
+        System.out.println("8: Disconnect");
     }
 }
