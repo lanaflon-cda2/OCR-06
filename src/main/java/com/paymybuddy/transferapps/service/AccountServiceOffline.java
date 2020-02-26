@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @Service
-public class AccountService {
+public class AccountServiceOffline {
 
     private static final Logger logger = LogManager.getLogger("AccountService");
     public UserAccount userAccount;
@@ -26,12 +26,15 @@ public class AccountService {
     private InputReaderUtil inputReaderUtil;
 
 
-    public UserAccount getConnection(String email, String password) {
+    public Boolean getConnection() {
+        String email = inputReaderUtil.readString(StateEnum.EMAIL.getStr());
+        String password = inputReaderUtil.readString(StateEnum.PASSWORD.getStr());
         if (accountDAO.userConnected(email, password)) {
-            UserAccount userAccount = accountDAO.getUserInfo(email);
-            return userAccount;
+            userAccount = accountDAO.getUserInfo(email);
+            System.out.println("Hello " + userAccount.getName() + "! Your are connected");
+            return true;
         }
-        return null;
+        return false;
     }
 
     public Boolean addABuddy() {

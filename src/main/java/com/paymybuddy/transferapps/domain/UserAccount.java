@@ -1,5 +1,6 @@
 package com.paymybuddy.transferapps.domain;
 
+import com.paymybuddy.transferapps.util.TimeConnection;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,4 +14,5 @@ public class UserAccount {
     List<BankAccount> bankAccounts;
     List<String> connectionEmails;
     List<Transaction> historicTransactions;
+    TimeConnection timeConnection;
 }

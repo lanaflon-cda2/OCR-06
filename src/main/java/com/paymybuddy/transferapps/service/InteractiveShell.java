@@ -1,27 +1,33 @@
 package com.paymybuddy.transferapps.service;
 
 import com.paymybuddy.transferapps.util.InputReaderUtil;
+import com.paymybuddy.transferapps.util.TimeConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class InteractiveShell {
 
+    @Autowired
+    private static InputReaderUtil inputReaderUtil;
+
     private static AccountService accountService = new AccountService();
-    private static InputReaderUtil inputReaderUtil = new InputReaderUtil();
     private static boolean continueApp = true;
-    private static Boolean isconnected = true;
+    private static TimeConnection timeConnection = new TimeConnection();
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
-    public static void loadWelcomeInterface() {
+    public void loadWelcomeInterface() {
         System.out.println("Welcome to Transferapp by Paymybuddy");
         while (continueApp) {
-            loadWelcomeMenue();
+            System.out.println("1: enter your email and password \n 2: Shutdown System");
             int option = inputReaderUtil.readInt("Please select an option.");
             switch (option) {
                 case 1: {
-                    isconnected = accountService.getConnection();
-                    if (isconnected)
+                    timeConnection.activate(accountService.getConnection());
+                    if (timeConnection.isActive())
                         loadAccountInterface();
                     break;
                 }
@@ -36,8 +42,8 @@ public class InteractiveShell {
         }
     }
 
-    public static void loadAccountInterface() {
-        while (isconnected) {
+    public void loadAccountInterface() {
+        while (timeConnection.isActive()) {
             loadAccountMenue();
             int option = inputReaderUtil.readInt("Please select an option.");
             switch (option) {
@@ -50,7 +56,7 @@ public class InteractiveShell {
                     break;
                 }
                 case 3: {
-                    accountService.depositMoney();
+                    accountService.withDrawMoneyFromBankAndAddOnTheAccount();
                     break;
                 }
                 case 4: {
@@ -71,22 +77,17 @@ public class InteractiveShell {
                 }
                 case 8: {
                     System.out.println("You are disconnected");
-					isconnected = false;
-					loadWelcomeInterface();
+                    timeConnection.desactivate();
                     break;
                 }
                 default:
                     System.out.println("Unsupported option. Please enter a number corresponding to the provided menu");
             }
         }
+        loadWelcomeInterface();
     }
 
-    private static void loadWelcomeMenue() {
-        System.out.println("1: enter your email and password");
-        System.out.println("2: Shutdown System");
-    }
-
-    private static void loadAccountMenue() {
+    private void loadAccountMenue() {
         System.out.println("1: Add a buddy on my list");
         System.out.println("2: Add a bank account");
         System.out.println("3: Deposit money on my account");
