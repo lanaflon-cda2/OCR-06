@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.Charset;
 import java.util.List;
 
 
@@ -18,24 +17,34 @@ import java.util.List;
 public class AccountService {
 
     private static final Logger logger = LogManager.getLogger("AccountService");
-    public UserAccount userAccount;
+    private UserAccount userAccount;
 
     @Autowired
     private AccountDAO accountDAO;
-    @Autowired
-    private InputReaderUtil inputReaderUtil;
-
 
     public UserAccount getConnection(String email, String password) {
-        if (accountDAO.userConnected(email, password)) {
+        if (accountDAO.isGoodLogs(email, password)) {
             UserAccount userAccount = accountDAO.getUserInfo(email);
+            this.userAccount = userAccount;
             return userAccount;
         }
         return null;
     }
 
-    public Boolean addABuddy() {
-        String email = inputReaderUtil.readString(StateEnum.CONNECTION_EMAIL.getStr());
+    public void disconnect() {
+        accountDAO.diconnect(userAccount.getEmail());
+        this.userAccount = null;
+    }
+
+    public Boolean isConnected() {
+        if (userAccount.getEmail().isEmpty()) {
+            return false;
+        } else {
+            return accountDAO.isConnected(userAccount.getEmail());
+        }
+    }
+
+    public Boolean addAFriend(String email) {
         if (accountDAO.addRelativeConnection(userAccount.getEmail(), email)) {
             System.out.println("Your are connected with" + email);
             return true;
@@ -43,79 +52,57 @@ public class AccountService {
         return false;
     }
 
-    public void addABankAccount() {
-        String bankName = inputReaderUtil.readString(StateEnum.NEW_BANKACCOUNT.getStr());
+    public void addABankAccount(String bankName) {
         // TODO: create a service in order to entering the IBAN
-        String iban = new String(new byte[20], Charset.forName("UTF-8"));
+        Integer character = (int) (Math.random() * 20);
+        String iban = character.toString();
         accountDAO.addBankAccount(userAccount.getEmail(), bankName, iban);
     }
 
-    public void withDrawMoneyFromBankAndAddOnTheAccount() {
-        Double amount = inputReaderUtil.readDouble(StateEnum.AMOUNT_WITHDRAW.getStr());
-        accountDAO.updateMoneyOnAccount(userAccount.getEmail(), amount);
+    public void withDrawMoneyFromBankAndAddOnTheAccount(String bankAccountName, Double amount) {
+        accountDAO.tradingWithBank(userAccount.getEmail(), bankAccountName, amount);
+        String description = "Withdraw my Money from a bank Account";
+        accountDAO.addTransaction(userAccount.getEmail(), bankAccountName, amount, 0.0, description);
         userAccount = accountDAO.getUserInfo(userAccount.getEmail());
     }
 
-    public void sendMoneyToARelative() {
-        Double amount;
+    public void depositMoneyToBankAccount(String bankAccountName, Double amount) {
+        accountDAO.tradingWithBank(userAccount.getEmail(), bankAccountName, -amount);
+        String description = "Sending my money to a bank Account";
+        accountDAO.addTransaction(userAccount.getEmail(), bankAccountName, -amount, 0.0, description);
+        userAccount = accountDAO.getUserInfo(userAccount.getEmail());
+    }
+
+    public void sendMoneyToARelative(String relativeEmail, Double amount, String description) {
         Double taxApps;
-        Double amountRemaining;
-        String description;
-        int friendID;
-        List<String> friends = accountDAO.getRelatives(userAccount.getEmail());
-        if (friends.isEmpty()) {
-            logger.error(StateEnum.NO_RELATIVES.getStr());
-        } else {
-            for (int i = 0; i < friends.size(); i++) {
-                System.out.println(i + ": " + friends.get(i));
-            }
-            friendID = inputReaderUtil.readInt(StateEnum.CHOOSE_FRIEND.getStr());
-            amount = inputReaderUtil.readDouble(StateEnum.AMOUNT_SEND.getStr());
-            description = inputReaderUtil.readString(StateEnum.DESCRIPTION.getStr());
-            taxApps = 0.05 * amount;
-            amountRemaining = 0.95 * amount;
-            accountDAO.updateMoneyOnAccount(userAccount.getEmail(), -amount);
-            accountDAO.updateMoneyOnAccount(friends.get(friendID), amountRemaining);
-            accountDAO.addTransaction(userAccount.getEmail(), friends.get(friendID), amount, taxApps, description);
-            userAccount = accountDAO.getUserInfo(userAccount.getEmail());
-        }
+        taxApps = 0.05 * amount;
+        //debit the account of the sender
+        accountDAO.updateMoneyOnAccount(userAccount.getEmail(), -amount);
+        //credit the account of the receiver
+        accountDAO.updateMoneyOnAccount(relativeEmail, amount);
+        //debit the account 5% of the amount of the transaction  and deposit on the account of the company PayMyBuddy
+        accountDAO.tradingWithBank(userAccount.getEmail(), "BankOfPatMyBuddyCompany", taxApps);
+        //recording the transaction
+        accountDAO.addTransaction(userAccount.getEmail(), relativeEmail, amount, taxApps, description);
+        userAccount = accountDAO.getUserInfo(userAccount.getEmail());
     }
 
-    public void sendMoneyToBankAccount() {
-        List<String> banks = accountDAO.getBankAccounts(userAccount.getEmail());
-        if (banks.isEmpty()) {
-            logger.error(StateEnum.NO_BANKACCOUNT.getStr());
-        } else {
-            for (int i = 0; i < banks.size(); i++) {
-                System.out.println(i + ": " + banks.get(i));
-            }
-            int bankAccountID = inputReaderUtil.readInt(StateEnum.CHOOSE_BANKACCOUNT.getStr());
-            // TODO: call a service which can connect whith the IBAN of the bank
-            Double amount = inputReaderUtil.readDouble(StateEnum.AMOUNT_DEPOSIT.getStr());
-            String description = inputReaderUtil.readString(StateEnum.DESCRIPTION.getStr());
-            accountDAO.updateMoneyOnAccount(userAccount.getEmail(), -amount);
-            accountDAO.addTransaction(userAccount.getEmail(), banks.get(bankAccountID), amount, 0.0, description);
-            userAccount = accountDAO.getUserInfo(userAccount.getEmail());
-        }
+
+    //Getters
+
+    public List<Transaction> getTransactionInfo() {
+        return accountDAO.getTransaction(userAccount.getEmail());
     }
 
-    public void getTransactionInfo() {
-        List<Transaction> transactions = accountDAO.getTransaction(userAccount.getEmail());
-        System.out.println("Date, Money Amount, Relation, Transaction Tax, Description");
-        for (Transaction transaction : transactions) {
-            System.out.println(
-                    transaction.getDate() + " | "
-                            + transaction.getMoneyAmount() + " | "
-                            + transaction.getRelation() + " | "
-                            + transaction.getTaxAmount() + " | "
-                            + transaction.getDescription());
-        }
+    public UserAccount getAccountInfo() {
+        return userAccount;
     }
 
-    public void getAccountInfo() {
-        System.out.println("Info on " + userAccount.getName() + ":");
-        System.out.println("Email: " + userAccount.getEmail());
-        System.out.println("Money credited on the account: " + userAccount.getMoneyAmount());
+    public List<String> getBankAccounts() {
+        return accountDAO.getBankAccounts(userAccount.getEmail());
     }
 
+    public List<String> getRelatives() {
+        return accountDAO.getRelatives(userAccount.getEmail());
+    }
 }

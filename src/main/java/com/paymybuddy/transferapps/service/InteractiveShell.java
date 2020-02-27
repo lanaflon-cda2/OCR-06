@@ -48,7 +48,7 @@ public class InteractiveShell {
             int option = inputReaderUtil.readInt("Please select an option.");
             switch (option) {
                 case 1: {
-                    accountService.addABuddy();
+                    accountService.addAFriend();
                     break;
                 }
                 case 2: {
@@ -64,7 +64,7 @@ public class InteractiveShell {
                     break;
                 }
                 case 5: {
-                    accountService.sendMoneyToBankAccount();
+                    accountService.depositMoneyToBankAccount();
                     break;
                 }
                 case 6: {

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add a medical record</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+    <link href="../static/css/spring-core.css"
+          th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
+</head>
+<body>
+<div class="container">
+
+    <h2>DEPOSIT MONEY.</h2>
+
+    <div>
+        <form name='f' th:object="${depositMoney}" th:action="@{/depositMoney/depositing}"method='POST'>
+            <table>
+                <tr>
+                    <td>Select BankAccount:</td>
+                    <td>
+                        <select th:field="*{stringReader}">
+                            <option value=""> --</option>
+                            <option th:each="bankAccountName : ${bankAccounts}"
+                                    th:value="${bankAccountName}"
+                                    th:utext="${bankAccountName}"/>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Enter MoneyAmount:</td>
+                    <td>
+                        <input type="text" class="form-control" th:field="*{doubleReader}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input name="submit" type="submit" value="submit"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+</body>
+</html>

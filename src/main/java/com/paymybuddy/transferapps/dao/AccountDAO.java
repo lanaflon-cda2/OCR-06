@@ -4,7 +4,6 @@ import com.paymybuddy.transferapps.config.DataBaseConfig;
 import com.paymybuddy.transferapps.constants.DBMysSqlQuery;
 import com.paymybuddy.transferapps.domain.Transaction;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.util.TimeConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,21 +26,21 @@ public class AccountDAO {
     @Value("${databaseName}")
     public String databaseName;
 
-    public Boolean userConnected(String log, String password) {
+    public Boolean isGoodLogs(String log, String password) {
         Connection con = null;
         PreparedStatement ps = null;
         int rs = 0;
         Boolean isconnected = false;
         try {
             con = dataBaseConfig.getConnection(databaseName);
-            ps = con.prepareStatement(DBMysSqlQuery.UPDATE_CONNECTION);
+            ps = con.prepareStatement(DBMysSqlQuery.ACTIVATE_CONNECTION);
             ps.setString(1, log);
             ps.setString(2, password);
             rs = ps.executeUpdate();
             if (rs > 0) {
                 isconnected = true;
             } else {
-                System.out.println("Wrong logging or password, please retry");
+                logger.error("Wrong logging or password, please retry");
             }
         } catch (Exception ex) {
             logger.error("Error fetching next available slot", ex);
@@ -49,6 +48,45 @@ public class AccountDAO {
             closeAll(ps, con, null);
         }
         return isconnected;
+    }
+
+    public void diconnect(String email) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = dataBaseConfig.getConnection(databaseName);
+            ps = con.prepareStatement(DBMysSqlQuery.DESACTIVATE_CONNECTION);
+            ps.setString(1, email);
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            logger.error("Error while trying to disconnect", ex);
+        } finally {
+            closeAll(ps, con, null);
+        }
+    }
+
+    public void tradingWithBank(String email, String bankAccountName, Double amount) {
+        //TODO: make contact with the bank to have permission to withdraw
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        Boolean isconnected = false;
+        try {
+            con = dataBaseConfig.getConnection(databaseName);
+            ps = con.prepareStatement(DBMysSqlQuery.UPDATE_MONEY);
+            ps.setDouble(1, amount);
+            ps.setString(2, email);
+            rs = ps.executeUpdate();
+            if (rs > 0) {
+                isconnected = true;
+            } else {
+                System.out.println("You have reach the max amount of money you can deposit on your account");
+            }
+        } catch (Exception ex) {
+            logger.error("Error fetching next available slot", ex);
+        } finally {
+            closeAll(ps, con, null);
+        }
     }
 
     public void updateMoneyOnAccount(String email, Double amount) {
@@ -111,7 +149,7 @@ public class AccountDAO {
             ps.setString(3, iban);
             rs = ps.executeUpdate();
             if (rs > 0) {
-                System.out.println(bankName +" successfully added.");
+                System.out.println(bankName + " successfully added.");
                 isconnected = true;
             } else {
                 System.out.println("Sorry, the IBAN Allready exist, please enter a new one");
@@ -163,21 +201,52 @@ public class AccountDAO {
         }
     }
 
+    public Boolean isConnected(String email) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        int rs2;
+        Timestamp timestamp = null;
+        try {
+            con = dataBaseConfig.getConnection(databaseName);
+            ps = con.prepareStatement(DBMysSqlQuery.CHECK_CONNECTION);
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                timestamp = rs.getTimestamp(1);
+                if (timestamp.after(new Timestamp(System.currentTimeMillis() - 1000 * 60 * 4))) {
+                    ps = con.prepareStatement(DBMysSqlQuery.UPDATE_CONNECTION);
+                    ps.setString(1, email);
+                    rs2 = ps.executeUpdate();
+                    if (rs2 > 0) {
+                        return true;
+                    }
+                }
+                ;
+            }
+        } catch (Exception ex) {
+            logger.error("Error connecting with the database", ex);
+        } finally {
+            closeAll(ps, con, null);
+        }
+        return false;
+    }
+
     public UserAccount getUserInfo(String userEmail) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        UserAccount userAccount = new UserAccount();
+        UserAccount userAccount = null;
         try {
             con = dataBaseConfig.getConnection(databaseName);
             ps = con.prepareStatement(DBMysSqlQuery.GET_ACCOUNT_INFO);
             ps.setString(1, userEmail);
             rs = ps.executeQuery();
-            userAccount.setEmail(userEmail);
             while (rs.next()) {
-                userAccount.setName(rs.getString("name"));
-                userAccount.setMoneyAmount(rs.getDouble("moneyAmount"));
-                userAccount.setTimeConnection(new TimeConnection());
+                userAccount = new UserAccount(
+                        userEmail,
+                        rs.getString("name"),
+                        rs.getDouble("moneyAmount"));
             }
             dataBaseConfig.closeResultSet(rs);
         } catch (Exception ex) {
@@ -187,6 +256,7 @@ public class AccountDAO {
         }
         return userAccount;
     }
+
     public List<String> getBankAccounts(String userEmail) {
         List<String> bankAccounts = new ArrayList<>();
         Connection con = null;
@@ -243,13 +313,18 @@ public class AccountDAO {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                Transaction transaction = new Transaction();
-                transaction.setMoneyAmount(rs.getDouble("amount"));
-                transaction.setTaxAmount(rs.getDouble("perceiveAmountForApp"));
-                transaction.setRelation(rs.getString("relationEmail"));
-                transaction.setDescription(rs.getString("description"));
-                transaction.setDate(rs.getTimestamp("date"));
-                transactions.add(transaction);
+                while (rs.next()) {
+                    Transaction transaction = new Transaction();
+                    if (rs.getBoolean("sendingOrReceiving")) {
+                        transaction.setIsCredit("Debit");
+                    } else transaction.setIsCredit("Credit");
+                    transaction.setMoneyAmount(rs.getDouble("amount"));
+                    transaction.setTaxAmount(rs.getDouble("perceiveAmountForApp"));
+                    transaction.setRelative(rs.getString("relativeEmail"));
+                    transaction.setDescription(rs.getString("description"));
+                    transaction.setDate(rs.getTimestamp("date"));
+                    transactions.add(transaction);
+                }
             } else {
                 System.out.println("No transaction recorded yet.");
             }
@@ -286,7 +361,4 @@ public class AccountDAO {
     public void setLogger(Logger testlogger) {
         this.logger = testlogger;
     }
-
-
-
 }

@@ -56,7 +56,7 @@ public class AccountServiceTest {
     public void returnTrueAfterEnterGoodLogs() {
         //ARRANGE
         when(inputReaderUtil.readString(anyString())).thenReturn("test@Mock.com").thenReturn("John");
-        when(accountDAO.userConnected(anyString(), anyString())).thenReturn(true);
+        when(accountDAO.isGoodLogs(anyString(), anyString())).thenReturn(true);
         when(accountDAO.getUserInfo(anyString())).thenReturn(userAccount);
         //ACT
         Boolean result = accountService.getConnection();

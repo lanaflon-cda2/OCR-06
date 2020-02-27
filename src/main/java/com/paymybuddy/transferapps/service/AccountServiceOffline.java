@@ -29,7 +29,7 @@ public class AccountServiceOffline {
     public Boolean getConnection() {
         String email = inputReaderUtil.readString(StateEnum.EMAIL.getStr());
         String password = inputReaderUtil.readString(StateEnum.PASSWORD.getStr());
-        if (accountDAO.userConnected(email, password)) {
+        if (accountDAO.isGoodLogs(email, password)) {
             userAccount = accountDAO.getUserInfo(email);
             System.out.println("Hello " + userAccount.getName() + "! Your are connected");
             return true;
@@ -109,7 +109,7 @@ public class AccountServiceOffline {
             System.out.println(
                     transaction.getDate() + " | "
                             + transaction.getMoneyAmount() + " | "
-                            + transaction.getRelation() + " | "
+                            + transaction.getRelative() + " | "
                             + transaction.getTaxAmount() + " | "
                             + transaction.getDescription());
         }

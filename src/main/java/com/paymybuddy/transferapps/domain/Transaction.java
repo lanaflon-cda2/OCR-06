@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class Transaction {
-    boolean isCredit;
-    String relation;
+    String isCredit;
+    String relative;
     double moneyAmount;
     double taxAmount;
     String description;
