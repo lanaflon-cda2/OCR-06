@@ -25,8 +25,10 @@ public class DBMysSqlQuery {
 
     public static final String ACTIVATE_CONNECTION =
             "update UserAccount set dateLog=now() WHERE email=? AND password=?;";
+
     public static final String DESACTIVATE_CONNECTION =
             "update UserAccount set dateLog='00/00/0 00:00:00' WHERE email=?";
+
     public static final String ADD_EMAIL_CONNECTION =
             "INSERT INTO Connections (accountEmail, relationEmail)" +
                     "SELECT  ?,UserAccount.email FROM UserAccount WHERE UserAccount.email=?;";

@@ -1,4 +1,4 @@
-package com.paymybuddy.transferapps.dao;
+package com.paymybuddy.transferapps.repositories;
 
 import com.paymybuddy.transferapps.config.DataBaseConfig;
 import com.paymybuddy.transferapps.constants.DBMysSqlQuery;
@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @Repository
-public class AccountDAO {
+public class AccountDAO_old_Version {
 
     private Logger logger = LogManager.getLogger("AccountDAO");
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
@@ -50,7 +50,7 @@ public class AccountDAO {
         return isconnected;
     }
 
-    public void diconnect(String email) {
+    public void disconnect(String email) {
         Connection con = null;
         PreparedStatement ps = null;
         try {

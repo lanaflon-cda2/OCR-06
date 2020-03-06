@@ -1,15 +1,18 @@
 package com.paymybuddy.transferapps.service;
 
-import com.paymybuddy.transferapps.constants.StateEnum;
-import com.paymybuddy.transferapps.dao.AccountDAO;
+import com.paymybuddy.transferapps.domain.BankAccount;
+import com.paymybuddy.transferapps.domain.RelationEmail;
+import com.paymybuddy.transferapps.repositories.AccountDAO;
 import com.paymybuddy.transferapps.domain.Transaction;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,18 +24,26 @@ public class AccountService {
 
     @Autowired
     private AccountDAO accountDAO;
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
+    private RelativeEmailRepository relativeEmailRepository;
+
 
     public UserAccount getConnection(String email, String password) {
         if (accountDAO.isGoodLogs(email, password)) {
-            UserAccount userAccount = accountDAO.getUserInfo(email);
-            this.userAccount = userAccount;
+            this.userAccount = userAccountRepository.findByEmail(userAccount.getEmail());
             return userAccount;
         }
         return null;
     }
 
     public void disconnect() {
-        accountDAO.diconnect(userAccount.getEmail());
+        accountDAO.disconnect(userAccount.getEmail());
         this.userAccount = null;
     }
 
@@ -59,39 +70,69 @@ public class AccountService {
         accountDAO.addBankAccount(userAccount.getEmail(), bankName, iban);
     }
 
-    public void withDrawMoneyFromBankAndAddOnTheAccount(String bankAccountName, Double amount) {
+    public void withDrawMoneyFromBankAndAddOnTheAccount(String bankAccountName, Double amount, String description) {
         accountDAO.tradingWithBank(userAccount.getEmail(), bankAccountName, amount);
-        String description = "Withdraw my Money from a bank Account";
-        accountDAO.addTransaction(userAccount.getEmail(), bankAccountName, amount, 0.0, description);
-        userAccount = accountDAO.getUserInfo(userAccount.getEmail());
+        Transaction transaction = new Transaction(
+                false,
+                description,
+                amount,
+                userAccount.getEmail(),
+                bankAccountName,
+                Timestamp.from(Instant.now()),
+                0.0);
+        accountDAO.addTransaction(transaction);
+        this.userAccount = userAccountRepository.findByEmail(userAccount.getEmail());
     }
 
-    public void depositMoneyToBankAccount(String bankAccountName, Double amount) {
+    public void depositMoneyToBankAccount(String bankAccountName, Double amount, String description) {
         accountDAO.tradingWithBank(userAccount.getEmail(), bankAccountName, -amount);
-        String description = "Sending my money to a bank Account";
-        accountDAO.addTransaction(userAccount.getEmail(), bankAccountName, -amount, 0.0, description);
-        userAccount = accountDAO.getUserInfo(userAccount.getEmail());
+        Transaction transaction = new Transaction(
+                true,
+                description,
+                -amount,
+                userAccount.getEmail(),
+                bankAccountName,
+                Timestamp.from(Instant.now()),
+                0.0);
+        accountDAO.addTransaction(transaction);
+        this.userAccount = userAccountRepository.findByEmail(userAccount.getEmail());
     }
 
     public void sendMoneyToARelative(String relativeEmail, Double amount, String description) {
-        Double taxApps;
-        taxApps = 0.05 * amount;
+        Double taxApps = 0.05 * amount;
         //debit the account of the sender
         accountDAO.updateMoneyOnAccount(userAccount.getEmail(), -amount);
         //credit the account of the receiver
         accountDAO.updateMoneyOnAccount(relativeEmail, amount);
         //debit the account 5% of the amount of the transaction  and deposit on the account of the company PayMyBuddy
-        accountDAO.tradingWithBank(userAccount.getEmail(), "BankOfPatMyBuddyCompany", taxApps);
+        accountDAO.tradingWithBank(userAccount.getEmail(), "BankOfPayMyBuddyCompany", taxApps);
         //recording the transaction
-        accountDAO.addTransaction(userAccount.getEmail(), relativeEmail, amount, taxApps, description);
-        userAccount = accountDAO.getUserInfo(userAccount.getEmail());
+        Transaction transaction = new Transaction(
+                true,
+                description,
+                -amount,
+                userAccount.getEmail(),
+                relativeEmail,
+                Timestamp.from(Instant.now()),
+                taxApps);
+        accountDAO.addTransaction(transaction);
+        Transaction transactionInverse = new Transaction(
+                false,
+                description,
+                0.95 * amount,
+                userAccount.getEmail(),
+                relativeEmail,
+                Timestamp.from(Instant.now()),
+                taxApps);
+        accountDAO.addTransaction(transactionInverse);
+        this.userAccount = userAccountRepository.findByEmail(userAccount.getEmail());
     }
 
 
     //Getters
 
     public List<Transaction> getTransactionInfo() {
-        return accountDAO.getTransaction(userAccount.getEmail());
+        return transactionRepository.findByEmail(userAccount.getEmail());
     }
 
     public UserAccount getAccountInfo() {
@@ -99,10 +140,18 @@ public class AccountService {
     }
 
     public List<String> getBankAccounts() {
-        return accountDAO.getBankAccounts(userAccount.getEmail());
+        List<String> bankAccountName = new ArrayList<>();
+        for (BankAccount bank: bankAccountRepository.findByEmail(userAccount.getEmail())) {
+            bankAccountName.add(bank.getAccountName());
+        }
+        return bankAccountName;
     }
 
     public List<String> getRelatives() {
-        return accountDAO.getRelatives(userAccount.getEmail());
+        List<String> relativeList = new ArrayList<>();
+        for (RelationEmail relative:  relativeEmailRepository.findByEmail(userAccount.getEmail())) {
+            relativeList.add(relative.getEmail());
+        }
+        return relativeList;
     }
 }

@@ -1,6 +1,6 @@
 package com.paymybuddy.transferapps.unit;
 
-import com.paymybuddy.transferapps.dao.AccountDAO;
+import com.paymybuddy.transferapps.repositories.AccountDAO;
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.service.AccountService;
 import com.paymybuddy.transferapps.util.InputReaderUtil;
