@@ -15,7 +15,7 @@ public class AccountDAO {
 
     private static final Logger logger = LogManager.getLogger("AccountService");
     EntityManager em;
-
+/*
     public Boolean isGoodLogs(String log, String password) {
         Query query = em.createQuery(DBMysSqlQuery.ACTIVATE_CONNECTION);
         try {
@@ -66,7 +66,7 @@ public class AccountDAO {
 
     public void tradingWithBank(String email, String bankAccountName, Double amount) {
         //TODO: make contact with the bank to have permission to withdraw
-        Query query = em.createQuery(DBMysSqlQuery.DESACTIVATE_CONNECTION);
+        Query query = em.createQuery(DBMysSqlQuery.UPDATE_MONEY);
         try {
             query
                     .setParameter(1, amount)
@@ -123,5 +123,5 @@ public class AccountDAO {
         em.persist(transaction);
         em.getTransaction().commit();
     }
-
+*/
 }

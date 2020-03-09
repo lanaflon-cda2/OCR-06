@@ -7,7 +7,7 @@ import org.springframework.data.repository.*;
 
 
 
-public interface UserAccountRepository extends Repository<UserAccount, Long> {
-    @Query(value = DBMysSqlQuery.GET_ACCOUNT_INFO, nativeQuery = true)
-    UserAccount findByEmail(String email);
+public interface UserAccountRepository extends CrudRepository<UserAccount, Long> {
+
+    UserAccount findFirstByEmail(String email);
 }

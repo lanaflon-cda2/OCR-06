@@ -1,7 +1,7 @@
 package com.paymybuddy.transferapps.controllers;
 
 
-import com.paymybuddy.transferapps.domain.Reader;
+import com.paymybuddy.transferapps.dto.Reader;
 import com.paymybuddy.transferapps.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

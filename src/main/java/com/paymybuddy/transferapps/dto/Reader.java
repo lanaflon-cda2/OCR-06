@@ -1,4 +1,4 @@
-package com.paymybuddy.transferapps.domain;
+package com.paymybuddy.transferapps.dto;
 
 import lombok.Getter;
 import lombok.Setter;

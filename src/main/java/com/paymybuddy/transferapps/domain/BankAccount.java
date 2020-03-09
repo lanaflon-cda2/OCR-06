@@ -11,18 +11,19 @@ import javax.persistence.*;
 @Table(name = "bankAccount")
 public class BankAccount {
     @Id
-    @GeneratedValue
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_email")
-    UserAccount userAccount;
-
+    private String email;
     @Column(nullable = false)
     String accountName;
     @Column(nullable = false)
     String accountIban;
-    @Column(nullable = false)
-    double accountMoneyAmount;
 
+    @ManyToOne
+    @JoinColumn(name = "email")
+    UserAccount userAccount;
+
+    public BankAccount(String email, String bankName, String iban) {
+        this.email=email;
+        this.accountName=bankName;
+        this.accountIban=iban;
+    }
 }

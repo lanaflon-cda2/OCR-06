@@ -8,7 +8,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,11 +19,7 @@ public class Transaction {
     @Id
     @GeneratedValue
     private Long id;
-    /*
-        @ManyToOne
-        @JoinColumn(name = "user_email")
-        UserAccount userAccount;
-        */
+
 
     @Column
     Boolean sendingOrReceiving;
@@ -40,6 +35,11 @@ public class Transaction {
     Timestamp date;
     @Column
     double perceiveAmountForApp;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_email")
+    UserAccount userAccount;
 
     public Transaction(Boolean sendingOrReceiving, String description, double amount, String email, String relativeEmail, Timestamp date, double perceiveAmountForApp) {
         this.sendingOrReceiving = sendingOrReceiving;
