@@ -1,10 +1,9 @@
 package com.paymybuddy.transferapps.domain;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,34 +11,30 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity(name = "Transaction")
+@Entity
 @Table(name = "transaction")
 public class Transaction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
 
-    @Column
+    @Column(nullable = false)
     Boolean sendingOrReceiving;
     @Column
     String description;
-    @Column
+    @Column(nullable = false)
     double amount;
-    @Column
+    @Column(nullable = false)
     String email;
-    @Column
+    @Column(nullable = false)
     String relativeEmail;
-    @Column
+    @Column(nullable = false)
     Timestamp date;
-    @Column
+    @Column(nullable = false)
     double perceiveAmountForApp;
 
-
-    @ManyToOne
-    @JoinColumn(name = "user_email")
-    UserAccount userAccount;
 
     public Transaction(Boolean sendingOrReceiving, String description, double amount, String email, String relativeEmail, Timestamp date, double perceiveAmountForApp) {
         this.sendingOrReceiving = sendingOrReceiving;

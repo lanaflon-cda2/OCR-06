@@ -1,8 +1,9 @@
 package com.paymybuddy.transferapps.controllers;
 
 
-import com.paymybuddy.transferapps.dto.Reader;
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.domain.BankAccount;
+import com.paymybuddy.transferapps.service.ConnectionService;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,24 +14,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AddBankAccountControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
+    @Autowired
+    private MoneyTransferService moneyTransferService;
 
     @RequestMapping(value = "/bankAccount/add")
     public String addABankAccountToYourList(Model model) {
-        if (accountService.isConnected()) {
-            model.addAttribute("bankAccount", new Reader());
+        if (connectionService.isConnected()) {
+            model.addAttribute("bankAccount", new BankAccount());
             return "bankAccountAdd";
         }
         return "redirect:/";
     }
 
     @RequestMapping(value = "/bankAccount/adding")
-    public String addingABank(Reader reader) {
-        if (accountService.isConnected()) {
-            accountService.addABankAccount(reader.getStringReader());
+    public String addingABankAccount(BankAccount bankAccount) {
+        if (connectionService.isConnected()) {
+            if (moneyTransferService.addABankAccount(bankAccount) == false) {
+                return "redirect:/bankAccount/add";
+            }
             return "redirect:/userHome";
         }
         return "redirect:/";
     }
-
 }

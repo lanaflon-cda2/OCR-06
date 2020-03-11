@@ -1,8 +1,9 @@
 package com.paymybuddy.transferapps.controllers;
 
 
-import com.paymybuddy.transferapps.dto.Reader;
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.dto.Deposit;
+import com.paymybuddy.transferapps.service.ConnectionService;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,22 +14,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WithDrawMoneyControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
+    @Autowired
+    private MoneyTransferService moneyTransferService;
 
     @RequestMapping(value = "/withdrawMoney/withdraw")
     public String withdrawMoney(Model model) {
-        if (accountService.isConnected()) {
-            model.addAttribute("withdrawMoney", new Reader());
-            model.addAttribute("bankAccounts", accountService.getBankAccounts());
+        if (connectionService.isConnected()) {
+            model.addAttribute("withdrawMoney", new Deposit());
+            model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
             return "withdrawMoney";
         }
         return "redirect:/";
     }
 
     @RequestMapping(value = "/withdrawMoney/withdrawing")
-    public String withdrawing(Reader reader) {
-        if (accountService.isConnected()) {
-            accountService.withDrawMoneyFromBankAndAddOnTheAccount(reader.getStringReader(), reader.getDoubleReader());
+    public String withdrawing(Deposit deposit) {
+        if (connectionService.isConnected()) {
+            moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(deposit);
             return "redirect:/userHome";
         }
         return "redirect:/";

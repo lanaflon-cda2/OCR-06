@@ -26,8 +26,7 @@ public class AccountServiceTest {
 
     @Mock
     private AccountDAO accountDAO;
-    @Mock
-    private InputReaderUtil inputReaderUtil;
+
 
     private UserAccount userAccount;
     private List<String> bankAccounts;

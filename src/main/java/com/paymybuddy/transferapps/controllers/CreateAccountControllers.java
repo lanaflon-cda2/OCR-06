@@ -2,7 +2,7 @@ package com.paymybuddy.transferapps.controllers;
 
 
 import com.paymybuddy.transferapps.dto.CreateAccount;
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.service.ConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,25 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class CreateAccountControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
 
     @RequestMapping(value = "/account/create")
     public String createAccount(Model model) {
-        if (accountService.isConnected()) {
-            model.addAttribute("createAccount", new CreateAccount());
-            return "CreateAccount";
-        }
-        return "redirect:/";
+        model.addAttribute("createAccount", new CreateAccount());
+        return "CreateAccount";
     }
 
-    @RequestMapping(value = "/account/create")
+    @RequestMapping(value = "/account/creating")
     public String createAccount(CreateAccount createAccount) {
-        if (accountService.isConnected()) {
-            if (createAccount.getPassword()==createAccount.getConfirmPassword()) {
-                accountService.createAnAccount(createAccount);
-                return "redirect:/userHome";
-            }
-        }
+        connectionService.createAnAccount(createAccount);
         return "redirect:/";
     }
 }

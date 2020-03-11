@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Deposit {
-    String bankAccountName;
+    String accountName;
     String description;
     double amount;
 }

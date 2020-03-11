@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -13,17 +14,17 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "UserAccount")
+@Entity
 @Table(name="userAccount")
 public class UserAccount {
 
     @Id
     String email;
-    @Column
+    @Column(nullable = false)
     String name;
-    @Column
+    @Column(nullable = false)
     double moneyAmount;
-    @Column
+    @Column(nullable = false)
     Timestamp datelog;
 
     @OneToMany
@@ -34,9 +35,14 @@ public class UserAccount {
     @JoinColumn(name = "email")
     private Set<Transaction> transactions;
 
+    @OneToMany
+    @JoinColumn(name = "email")
+    private Set<RelationEmail> relationEmails;
+
     @OneToOne
     @JoinColumn(name = "email")
     private Password password;
+
 
     public UserAccount(String email, String name, Double moneyAmount, Timestamp timestamp) {
         this.email = email;

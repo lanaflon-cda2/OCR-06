@@ -1,7 +1,6 @@
 package com.paymybuddy.transferapps.controllers;
 
-
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.service.ConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DisconnectControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
 
     @RequestMapping(value = "/disconnect")
     public String disconnect() {
-            accountService.disconnect();
-            return "redirect:/";
+        connectionService.disconnect();
+        return "redirect:/";
     }
 }

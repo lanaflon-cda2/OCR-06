@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@Entity(name = "RelationEmail")
+@Entity
 @Table(name = "relationEmail")
 public class RelationEmail {
 
@@ -15,8 +15,8 @@ public class RelationEmail {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     String email;
-    @Column
+    @Column(nullable = false)
     String relativeEmail;
 }

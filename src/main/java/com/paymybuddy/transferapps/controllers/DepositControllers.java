@@ -2,8 +2,8 @@ package com.paymybuddy.transferapps.controllers;
 
 
 import com.paymybuddy.transferapps.dto.Deposit;
-import com.paymybuddy.transferapps.dto.Reader;
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.service.ConnectionService;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DepositControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
+    @Autowired
+    private MoneyTransferService moneyTransferService;
 
     @RequestMapping(value = "/depositMoney/deposit")
     public String depositMoney(Model model) {
-        if (accountService.isConnected()) {
+        if (connectionService.isConnected()) {
             model.addAttribute("depositMoney", new Deposit());
-            model.addAttribute("bankAccounts", accountService.getBankAccounts());
+            model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
             return "depositMoney";
         }
         return "redirect:/";
@@ -28,8 +30,8 @@ public class DepositControllers {
 
     @RequestMapping(value = "/depositMoney/depositing")
     public String depositing(Deposit deposit) {
-        if (accountService.isConnected()) {
-            accountService.depositMoneyToBankAccount(deposit);
+        if (connectionService.isConnected()) {
+            moneyTransferService.depositMoneyToBankAccount(deposit);
             return "redirect:/userHome";
         }
         return "redirect:/";

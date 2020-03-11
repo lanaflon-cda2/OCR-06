@@ -1,14 +1,14 @@
-package com.paymybuddy.transferapps.service;
+package com.paymybuddy.transferapps.repositories;
 
-import com.paymybuddy.transferapps.constants.DBMysSqlQuery;
 import com.paymybuddy.transferapps.domain.RelationEmail;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-
+@Repository
 public interface RelativeEmailRepository extends CrudRepository<RelationEmail, Long> {
-    @Query(value = DBMysSqlQuery.GET_FRIENDS, nativeQuery = true)
     List<RelationEmail> findByEmail(String email);
+    Optional<RelationEmail> findByEmailAndRelativeEmail(String email, String relativeEmail);
 }

@@ -3,7 +3,7 @@ package com.paymybuddy.transferapps.controllers;
 
 import com.paymybuddy.transferapps.dto.Logs;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.service.ConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class LogControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
 
     @RequestMapping("/")
     public String getLog(Model model) {
@@ -23,8 +23,8 @@ public class LogControllers {
     }
 
     @RequestMapping(value = "/log/submit")
-    public String getConnection(Logs logs, Model model) {
-        UserAccount userAccount = accountService.getConnection(logs);
+    public String getConnection(Logs logs) {
+        UserAccount userAccount = connectionService.getConnection(logs);
         if (userAccount != null) {
             return "redirect:/userHome";
         }
@@ -33,8 +33,8 @@ public class LogControllers {
 
     @RequestMapping("/userHome")
     public String userPage(Model model) {
-        if (accountService.isConnected()) {
-            model.addAttribute("name", accountService.getAccountInfo().getName());
+        if (connectionService.isConnected()) {
+            model.addAttribute("userAccount", connectionService.getAccountInfo());
             return "UserPage";
         }
         return "redirect:/";

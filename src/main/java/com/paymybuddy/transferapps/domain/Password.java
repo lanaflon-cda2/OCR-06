@@ -13,13 +13,13 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "Password")
+@Entity
 @Table(name="password")
 public class Password {
 
     @Id
     String email;
-    @Column
+    @Column(nullable = false)
     String password;
 
     @OneToOne

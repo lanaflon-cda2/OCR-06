@@ -1,7 +1,9 @@
 package com.paymybuddy.transferapps.controllers;
 
 
-import com.paymybuddy.transferapps.service.AccountService;
+import com.paymybuddy.transferapps.service.ConnectionService;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
+import com.paymybuddy.transferapps.service.RelativeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class GetAccountInfoControllers {
 
     @Autowired
-    private AccountService accountService;
+    private ConnectionService connectionService;
+    @Autowired
+    private MoneyTransferService moneyTransferService;
+    @Autowired
+    private RelativeService relativeService;
 
     @RequestMapping(value = "/accountInfo")
     public String getAccountInfo(Model model) {
-        if (accountService.isConnected()) {
-            model.addAttribute("userAccount", accountService.getAccountInfo());
-            model.addAttribute("relatives", accountService.getRelatives());
-            model.addAttribute("bankAccounts", accountService.getBankAccounts());
+        if (connectionService.isConnected()) {
+            model.addAttribute("userAccount", connectionService.getAccountInfo());
+            model.addAttribute("relatives", relativeService.getRelatives());
+            model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
             return "AccountInfo";
         }
         return "redirect:/";

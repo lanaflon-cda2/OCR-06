@@ -48,10 +48,10 @@
                 <th>Date</th>
             </tr>
             <tr th:each="transaction : ${transactions}">
-                <td th:text="${transaction.isCredit}"></td>
-                <td th:text="${transaction.relative}"></td>
-                <td th:text="${transaction.moneyAmount}"></td>
-                <td th:text="${transaction.taxAmount}"></td>
+                <td th:text="${transaction.sendingOrReceiving}"></td>
+                <td th:text="${transaction.relativeEmail}"></td>
+                <td th:text="${transaction.Amount}"></td>
+                <td th:text="${transaction.perceiveAmountForApp}"></td>
                 <td th:text="${transaction.description}"></td>
                 <td th:text="${transaction.date}"></td>
             </tr>
