@@ -1,23 +1,22 @@
 package com.paymybuddy.transferapps.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
-@Table(name = "bankAccount")
-public class BankAccount {
+@Table(name = "relationEmail")
+public class RelationEmail {
+
     @Id
-    String accountIban;
-    @Column(nullable = false)
-    String accountName;
+    @GeneratedValue
+    private Long id;
+
     @Column(nullable = false)
     String email;
-
-
+    @Column(nullable = false)
+    String relativeEmail;
 }

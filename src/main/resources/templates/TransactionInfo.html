@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>List Persons</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+    <link href="../static/css/spring-core.css"
+          th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
+    <style>
+        table {
+            font-size: 12px;
+            border: 1px solid grey;
+            padding: 5px;
+            position: center;
+            overflow-wrap: break-word;
+        }
+
+        td {
+            max-width: 90px;
+            padding: 5px;
+            height: 70px;
+        }
+    </style>
+</head>
+<body>
+
+<div style="text-align: center;">
+    <div class="container">
+        <h2>
+            All Transactions
+        </h2>
+    </div>
+    <div style="display: inline-block; position: center;" th:if="${not #lists.isEmpty(transactions)}">
+        <table>
+            <tr style="text-align: center;">
+                <th>Transfer Type</th>
+                <th>Relative</th>
+                <th>Money Amount</th>
+                <th>Tax Amount</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+            <tr th:each="transaction : ${transactions}">
+                <td th:text="${transaction.sendingOrReceiving}"></td>
+                <td th:text="${transaction.relativeEmail}"></td>
+                <td th:text="${transaction.Amount}"></td>
+                <td th:text="${transaction.perceiveAmountForApp}"></td>
+                <td th:text="${transaction.description}"></td>
+                <td th:text="${transaction.date}"></td>
+            </tr>
+        </table>
+    </div>
+    <h2><a href="/userHome">Back to menu</a></h2>
+</div>
+</body>
+</html>

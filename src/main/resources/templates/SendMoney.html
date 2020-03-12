@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add a medical record</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+    <link href="../static/css/spring-core.css"
+          th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
+</head>
+<body>
+<div class="container">
+
+    <h2>SEND MONEY TO A FRIEND.</h2>
+
+    <div>
+        <form name='f' th:object="${sendMoney}" th:action="@{/sendMoney/sending}"method='POST'>
+            <table>
+                <tr>
+                    <td>Select a Friend:</td>
+                    <td>
+                        <select th:field="*{relativeEmail}">
+                            <option value=""> --</option>
+                            <option th:each="relativeEmail : ${relativesEmail}"
+                                    th:value="${relativeEmail}"
+                                    th:utext="${relativeEmail}"/>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Enter MoneyAmount:</td>
+                    <td>
+                        <input type="text" class="form-control" th:field="*{amount}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Add a description for this transaction (optional):</td>
+                    <td>
+                        <input type="text" class="form-control" th:field="*{description}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input name="submit" type="submit" value="submit"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+</body>
+</html>
