@@ -10,4 +10,11 @@ public class MainService {
 
     @Autowired
     protected UserAccountRepository userAccountRepository;
+
+    public void setUserAccountSession(UserAccount userAccount){
+        userAccountSession=userAccount;
+    }
+    public UserAccount getUserAccountSession(){
+        return userAccountSession;
+    }
 }

@@ -23,10 +23,9 @@ public class ConnectionService extends MainService {
     public UserAccount getConnection(Logs logs) {
         String email = logs.getEmail();
         String password = logs.getPassword();
-        if (!userAccountRepository.findByEmail(email).isEmpty()
+        if (userAccountRepository.findByEmail(email).isPresent()
                 && passwordRepository.findFirstByEmail(email).getPassword().equals(password)) {
             userAccountSession = userAccountRepository.findByEmail(email).stream().findFirst().get();
-            System.out.println(userAccountSession);
             userAccountSession.setDatelog(Timestamp.from(Instant.now()));
             userAccountRepository.save(userAccountSession);
             return userAccountSession;
