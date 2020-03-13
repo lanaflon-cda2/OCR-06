@@ -22,7 +22,7 @@ public class CreateAccountControllers {
     }
 
     @RequestMapping(value = "/account/creating")
-    public String createAccount(CreateAccount createAccount) {
+    public String creatingAccount(CreateAccount createAccount) {
         connectionService.createAnAccount(createAccount);
         return "redirect:/";
     }
