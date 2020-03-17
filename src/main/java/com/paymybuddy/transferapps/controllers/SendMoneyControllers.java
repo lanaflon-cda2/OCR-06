@@ -15,29 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SendMoneyControllers {
 
     @Autowired
-    private ConnectionService connectionService;
-    @Autowired
     private RelativeService relativeService;
     @Autowired
     private MoneyTransferService moneyTransferService;
 
 
-    @RequestMapping(value = "/sendMoney/send")
+    @RequestMapping(value = "/userHome/sendMoney/send")
     public String sendMoney(Model model) {
-        if (connectionService.isConnected()) {
-            model.addAttribute("sendMoney", new SendMoney());
-            model.addAttribute("relativesEmail", relativeService.getRelatives());
-            return "sendMoney";
-        }
-        return "redirect:/";
+        model.addAttribute("sendMoney", new SendMoney());
+        model.addAttribute("relativesEmail", relativeService.getRelatives());
+        return "sendMoney";
     }
 
-    @RequestMapping(value = "/sendMoney/sending")
+    @RequestMapping(value = "/userHome/sendMoney/sending")
     public String sending(SendMoney sendMoney) {
-        if (connectionService.isConnected()) {
-            moneyTransferService.sendMoneyToARelative(sendMoney);
-            return "redirect:/userHome";
-        }
-        return "redirect:/";
+        moneyTransferService.sendMoneyToARelative(sendMoney);
+        return "redirect:/userHome";
     }
 }

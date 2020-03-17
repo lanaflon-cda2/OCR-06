@@ -14,27 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AddfriendControllers {
 
     @Autowired
-    private ConnectionService connectionService;
-    @Autowired
     private RelativeService relativeService;
 
-    @RequestMapping(value = "/friend/add")
+    @RequestMapping(value = "/userHome/friend/add")
     public String addAFriendToYourList(Model model) {
-        if (connectionService.isConnected()) {
+
             model.addAttribute("relative", new RelationEmail());
             return "FriendAdd";
-        }
-        return "redirect:/";
     }
 
-    @RequestMapping(value = "/friend/adding")
+    @RequestMapping(value = "/userHome/friend/adding")
     public String addingAFriend(RelationEmail relationEmail) {
-        if (connectionService.isConnected()) {
-            if (relativeService.addAFriend(relationEmail) == false) {
-                return "redirect:/friend/add";
+            if (!relativeService.addAFriend(relationEmail)) {
+                return "redirect:/userHome/friend/add";
             }
-            return "redirect:/userHome";
-        }
-        return "redirect:/";
+            return "redirect:/userHome/userHome";
     }
 }

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -26,6 +25,8 @@ public class UserAccount {
     double moneyAmount;
     @Column(nullable = false)
     Timestamp datelog;
+    @Column(nullable = false)
+    String roles;
 
     @OneToMany
     @JoinColumn(name = "email")
@@ -49,5 +50,12 @@ public class UserAccount {
         this.name = name;
         this.moneyAmount = moneyAmount;
         this.datelog = timestamp;
+    }
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 }

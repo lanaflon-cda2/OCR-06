@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
@@ -116,18 +115,6 @@ public class ConnectionServiceTest {
         //ASSERT
         verify(userAccountRepository, times(0)).findByEmail(anyString());
         verify(passwordRepository, times(0)).findFirstByEmail(anyString());
-    }
-
-    @Test
-    public void updateDatelogAfterVerifyConnection() {
-        //ARRANGE
-        connectionService.setUserAccountSession(userAccount);
-        //ACT
-        Boolean test=connectionService.isConnected();
-        //ASSERT
-
-        assertThat(test).isTrue();
-        assertThat(connectionService.getUserAccountSession().getDatelog()).isAfter(new Timestamp(System.currentTimeMillis() - 1000 * 10));
     }
 
     @Test

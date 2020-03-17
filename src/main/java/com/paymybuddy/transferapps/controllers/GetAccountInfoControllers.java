@@ -20,14 +20,11 @@ public class GetAccountInfoControllers {
     @Autowired
     private RelativeService relativeService;
 
-    @RequestMapping(value = "/accountInfo")
+    @RequestMapping(value = "/userHome/accountInfo")
     public String getAccountInfo(Model model) {
-        if (connectionService.isConnected()) {
-            model.addAttribute("userAccount", connectionService.getAccountInfo());
-            model.addAttribute("relatives", relativeService.getRelatives());
-            model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
-            return "AccountInfo";
-        }
-        return "redirect:/";
+        model.addAttribute("userAccount", connectionService.getAccountInfo());
+        model.addAttribute("relatives", relativeService.getRelatives());
+        model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
+        return "AccountInfo";
     }
 }

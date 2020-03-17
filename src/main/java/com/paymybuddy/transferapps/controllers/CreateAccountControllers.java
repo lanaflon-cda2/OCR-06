@@ -26,4 +26,8 @@ public class CreateAccountControllers {
         connectionService.createAnAccount(createAccount);
         return "redirect:/";
     }
+    @RequestMapping(value = "/userHome/welcome")
+    public String welcome() {
+        return "Hi";
+    }
 }

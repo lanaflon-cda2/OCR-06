@@ -14,26 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DepositControllers {
 
     @Autowired
-    private ConnectionService connectionService;
-    @Autowired
     private MoneyTransferService moneyTransferService;
 
-    @RequestMapping(value = "/depositMoney/deposit")
+    @RequestMapping(value = "/userHome/depositMoney/deposit")
     public String depositMoney(Model model) {
-        if (connectionService.isConnected()) {
-            model.addAttribute("depositMoney", new Deposit());
-            model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
-            return "depositMoney";
-        }
-        return "redirect:/";
+        model.addAttribute("depositMoney", new Deposit());
+        model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
+        return "depositMoney";
     }
 
     @RequestMapping(value = "/depositMoney/depositing")
     public String depositing(Deposit deposit) {
-        if (connectionService.isConnected()) {
-            moneyTransferService.depositMoneyToBankAccount(deposit);
-            return "redirect:/userHome";
-        }
-        return "redirect:/";
+        moneyTransferService.depositMoneyToBankAccount(deposit);
+        return "redirect:/userHome";
     }
 }

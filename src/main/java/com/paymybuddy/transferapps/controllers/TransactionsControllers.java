@@ -13,16 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TransactionsControllers {
 
     @Autowired
-    private ConnectionService connectionService;
-    @Autowired
     private MoneyTransferService moneyTransferService;
 
-    @RequestMapping(value = "/transactionInfo")
+    @RequestMapping(value = "/userHome/transactionInfo")
     public String getTransactionInfo(Model model) {
-        if (connectionService.isConnected()) {
             model.addAttribute("transactions", moneyTransferService.getTransactionInfo());
             return "TransactionInfo";
-        }
-        return "redirect:/";
     }
 }

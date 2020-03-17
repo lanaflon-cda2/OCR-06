@@ -33,10 +33,7 @@ public class LogControllers {
 
     @RequestMapping("/userHome")
     public String userPage(Model model) {
-        if (connectionService.isConnected()) {
             model.addAttribute("userAccount", connectionService.getAccountInfo());
             return "UserPage";
-        }
-        return "redirect:/";
     }
 }

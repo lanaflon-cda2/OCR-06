@@ -12,7 +12,7 @@ public class DisconnectControllers {
     @Autowired
     private ConnectionService connectionService;
 
-    @RequestMapping(value = "/disconnect")
+    @RequestMapping(value = "/userHome/disconnect")
     public String disconnect() {
         connectionService.disconnect();
         return "redirect:/";
