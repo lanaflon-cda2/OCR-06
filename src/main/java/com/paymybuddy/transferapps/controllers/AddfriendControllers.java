@@ -18,7 +18,6 @@ public class AddfriendControllers {
 
     @RequestMapping(value = "/userHome/friend/add")
     public String addAFriendToYourList(Model model) {
-
             model.addAttribute("relative", new RelationEmail());
             return "FriendAdd";
     }
@@ -28,6 +27,6 @@ public class AddfriendControllers {
             if (!relativeService.addAFriend(relationEmail)) {
                 return "redirect:/userHome/friend/add";
             }
-            return "redirect:/userHome/userHome";
+            return "redirect:/userHome";
     }
 }

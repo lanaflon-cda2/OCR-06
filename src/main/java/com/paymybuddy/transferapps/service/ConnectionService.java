@@ -6,6 +6,7 @@ import com.paymybuddy.transferapps.dto.Logs;
 import com.paymybuddy.transferapps.repositories.PasswordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -20,19 +21,9 @@ public class ConnectionService extends MainService {
     @Autowired
     private PasswordRepository passwordRepository;
 
-    public UserAccount getConnection(Logs logs) {
-        String email = logs.getEmail();
-        String password = logs.getPassword();
-        if (userAccountRepository.findByEmail(email).isPresent()
-                && passwordRepository.findFirstByEmail(email).getPassword().equals(password)) {
+    public UserAccount getConnection(String email) {
             userAccountSession = userAccountRepository.findByEmail(email).stream().findFirst().get();
-            userAccountSession.setDatelog(Timestamp.from(Instant.now()));
-            userAccountRepository.save(userAccountSession);
             return userAccountSession;
-        } else {
-            log.error("Wrong email or password");
-            return null;
-        }
     }
 
     public void disconnect() {
@@ -60,8 +51,9 @@ public class ConnectionService extends MainService {
 
     public void createAnAccount(CreateAccount createAccount) {
         if (createAccount.getPassword().equals(createAccount.getConfirmPassword())) {
-            userAccountRepository.save(new UserAccount(createAccount.getEmail(), createAccount.getName(), 0.0, Timestamp.from(Instant.ofEpochMilli(0))));
-            passwordRepository.save(new Password(createAccount.getEmail(), createAccount.getPassword()));
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+            userAccountRepository.save(new UserAccount(createAccount.getEmail(), createAccount.getName(), 0.0, Timestamp.from(Instant.ofEpochMilli(0)),"ROLE_ADMIN"));
+            passwordRepository.save(new Password(createAccount.getEmail(), encoder.encode(createAccount.getPassword())));
         } else {
             log.error("The two entries for the password don't match each other");
         }

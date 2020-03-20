@@ -82,9 +82,11 @@ public class RelativeServiceTest {
         //ARRANGE
         List<RelationEmail> relationEmails = new ArrayList<>();
         relationEmails.add(relationEmail);
+        relationEmail = new RelationEmail();
         relationEmail.setRelativeEmail("another@guy.com");
         relationEmail.setId(40L);
         relationEmails.add(relationEmail);
+        relationEmail = new RelationEmail();
         relationEmail.setRelativeEmail("yetanother@guy.com");
         relationEmail.setId(50L);
         relationEmails.add(relationEmail);

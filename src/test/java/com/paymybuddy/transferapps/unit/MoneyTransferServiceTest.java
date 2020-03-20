@@ -2,17 +2,12 @@ package com.paymybuddy.transferapps.unit;
 
 
 import com.paymybuddy.transferapps.domain.BankAccount;
-import com.paymybuddy.transferapps.domain.Password;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.dto.CreateAccount;
 import com.paymybuddy.transferapps.dto.Deposit;
-import com.paymybuddy.transferapps.dto.Logs;
 import com.paymybuddy.transferapps.dto.SendMoney;
 import com.paymybuddy.transferapps.repositories.BankAccountRepository;
-import com.paymybuddy.transferapps.repositories.PasswordRepository;
 import com.paymybuddy.transferapps.repositories.TransactionRepository;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import com.paymybuddy.transferapps.service.ConnectionService;
 import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -22,7 +22,7 @@ public class MyUserDetails implements UserDetails {
         this.userName = user.getName();
         this.password = user.getPassword().getPassword();
         this.active = user.getDatelog().after(new Timestamp(System.currentTimeMillis() - 1000 * 60 * 4));
-        this.authorities = Arrays.stream(user.getRoles().split(","))
+        this.authorities = Arrays.stream(user.getRole().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
@@ -34,7 +34,6 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        System.out.println(password);
         return password;
     }
 

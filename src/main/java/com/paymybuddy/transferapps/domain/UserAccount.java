@@ -26,7 +26,7 @@ public class UserAccount {
     @Column(nullable = false)
     Timestamp datelog;
     @Column(nullable = false)
-    String roles;
+    String role;
 
     @OneToMany
     @JoinColumn(name = "email")
@@ -45,17 +45,11 @@ public class UserAccount {
     private Password password;
 
 
-    public UserAccount(String email, String name, Double moneyAmount, Timestamp timestamp) {
+    public UserAccount(String email, String name, Double moneyAmount, Timestamp timestamp, String role) {
         this.email = email;
         this.name = name;
         this.moneyAmount = moneyAmount;
         this.datelog = timestamp;
-    }
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
+        this.role = role;
     }
 }
