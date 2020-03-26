@@ -5,16 +5,13 @@ import com.paymybuddy.transferapps.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MainService {
-
-    protected static UserAccount userAccountSession;
-
     @Autowired
-    protected UserAccountRepository userAccountRepository;
+    private UserAccountRepository userAccountRepository;
 
-    public void setUserAccountSession(UserAccount userAccount){
-        userAccountSession=userAccount;
-    }
-    public UserAccount getUserAccountSession(){
-        return userAccountSession;
+    public UserAccount getUserAccountSession() {
+        return userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get();
     }
 }

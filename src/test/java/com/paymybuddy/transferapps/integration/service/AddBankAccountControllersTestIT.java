@@ -40,11 +40,10 @@ public class AddBankAccountControllersTestIT {
         createAccount.setEmail("test@i.com");
         createAccount.setPassword("pass");
         createAccount.setConfirmPassword("pass");
-        createAccountControllers.creatingAccount(createAccount);
+        //createAccountControllers.creatingAccount(createAccount);
         Logs logs = new Logs();
         logs.setPassword("pass");
         logs.setEmail("test@i.com");
-        logControllers.getConnection(logs);
     }
 
     @Test

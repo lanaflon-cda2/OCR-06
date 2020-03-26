@@ -64,7 +64,6 @@ public class MoneyTransferServiceTest {
         sendMoney = new SendMoney();
         sendMoney.setAmount(55.55);
         sendMoney.setRelativeEmail("this@guy.com");
-        moneyTransferService.setUserAccountSession(userAccount);
     }
 
     @Test

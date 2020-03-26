@@ -21,7 +21,7 @@ public class LogControllers {
         model.addAttribute("logs", new Logs());
         return "LogPage";
     }
-
+/*
     @RequestMapping(value = "/log/submit")
     public String getConnection(Logs logs) {
         UserAccount userAccount = connectionService.getConnection(logs);
@@ -30,7 +30,7 @@ public class LogControllers {
         }
         return "redirect:/";
     }
-
+*/
     @RequestMapping("/userHome")
     public String userPage(Model model) {
             model.addAttribute("userAccount", connectionService.getAccountInfo());

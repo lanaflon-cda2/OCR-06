@@ -3,6 +3,7 @@ package com.paymybuddy.transferapps.service;
 
 import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.repositories.RelativeEmailRepository;
+import com.paymybuddy.transferapps.repositories.UserAccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,12 @@ public class RelativeService extends MainService {
 
     @Autowired
     private RelativeEmailRepository relativeEmailRepository;
-
+    @Autowired
+    protected UserAccountRepository userAccountRepository;
 
     public boolean addAFriend(RelationEmail relationEmail) {
         if (!userAccountRepository.findByEmail(relationEmail.getRelativeEmail()).isEmpty()) {
-            relationEmail.setEmail(userAccountSession.getEmail());
+            relationEmail.setEmail(getUserAccountSession().getEmail());
             Optional<RelationEmail> existingRelation =
                     relativeEmailRepository.findByEmailAndRelativeEmail(
                             relationEmail.getEmail(),
@@ -42,7 +44,7 @@ public class RelativeService extends MainService {
 
     public List<String> getRelatives() {
         List<String> relativeList = new ArrayList<>();
-        for (RelationEmail relative : relativeEmailRepository.findByEmail(userAccountSession.getEmail())) {
+        for (RelationEmail relative : relativeEmailRepository.findByEmail(getUserAccountSession().getEmail())) {
             relativeList.add(relative.getRelativeEmail());
         }
         return relativeList;

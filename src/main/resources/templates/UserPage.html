@@ -31,7 +31,7 @@
 </head>
 <body>
 <div style="text-align: center;">
-    <h2>WELCOME [[${userAccount.name}]]!</h2>
+    <h2>WELCOME !</h2>
     <p><a href="/userHome/friend/add">Add a friend to your list</a></p>
     <p><a href="/userHome/bankAccount/add">Link a bank account to your account</a></p>
     <p><a href="/userHome/withdrawMoney/withdraw">Withdraw some money from a bank account</a></p>
@@ -39,7 +39,8 @@
     <p><a href="/userHome/sendMoney/send">Send some money to a relative</a></p>
     <p><a href="/userHome/accountInfo">Get account info</a></p>
     <p><a href="/userHome/transactionInfo">Get transaction info</a></p>
-    <p><a href="/userHome/disconnect">Disconnect</a></p>
+    <p>Logged in user: <b th:inline="text" class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+    <form th:action="@{/userHome/disconnect}" method="POST"><input type="submit" value="Logout"/></form> </p>
 </div>
 </body>
 </html>

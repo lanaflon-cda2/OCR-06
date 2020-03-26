@@ -36,7 +36,7 @@ public class AddRelativeTestIT {
         createAccount.setEmail("test@i.com");
         createAccount.setPassword("pass");
         createAccount.setConfirmPassword("pass");
-        createAccountControllers.creatingAccount(createAccount);
+        //createAccountControllers.creatingAccount(createAccount);
     }
 
     @Test
@@ -46,7 +46,6 @@ public class AddRelativeTestIT {
         logs.setPassword("pass");
         logs.setEmail("test@i.com");
         //ACT
-        logControllers.getConnection(logs);
         //ASSERT
         Optional<UserAccount> userAccount = userAccountRepository.findByEmail("test@i.com");
         assertThat(userAccount.get().getPassword()).isEqualTo("pass");

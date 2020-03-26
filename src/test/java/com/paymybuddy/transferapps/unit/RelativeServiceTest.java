@@ -57,7 +57,6 @@ public class RelativeServiceTest {
         userAccount.setDatelog(Timestamp.from(Instant.now()));
         userAccount.setEmail("test@Mock.com");
         userAccount.setName("John");
-        relativeService.setUserAccountSession(userAccount);
         relationEmail = new RelationEmail();
         relationEmail.setId(0L);
         relationEmail.setRelativeEmail("a@guy.com");
