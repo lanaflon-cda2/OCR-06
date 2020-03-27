@@ -3,7 +3,6 @@ package com.paymybuddy.transferapps.unit;
 
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.dto.CreateAccount;
-import com.paymybuddy.transferapps.dto.Logs;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
 import com.paymybuddy.transferapps.service.ConnectionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,6 @@ public class ConnectionServiceTest {
     private UserAccountRepository userAccountRepository;
 
     private UserAccount userAccount;
-    private Logs logs;
     private CreateAccount createAccount;
 
 
@@ -37,7 +35,6 @@ public class ConnectionServiceTest {
 
     @BeforeEach
     public void setup() {
-        logs = new Logs();
         createAccount = new CreateAccount();
         userAccount = new UserAccount();
         userAccount.setMoneyAmount(100);
@@ -47,6 +44,9 @@ public class ConnectionServiceTest {
         userAccount.setPassword("test");
         MockitoAnnotations.initMocks(this);
     }
+
+
+
 /*
     @Test
     public void returnGoodUserAccountAfterEnterGoodLogs() {
