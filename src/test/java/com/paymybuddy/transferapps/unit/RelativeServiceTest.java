@@ -16,14 +16,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,12 +40,11 @@ public class RelativeServiceTest {
 
 
     private UserAccount userAccount;
-
     private RelationEmail relationEmail;
 
 
     @InjectMocks
-    RelativeService relativeService = new RelativeService();
+    RelativeService relativeService;
 
     @BeforeEach
     public void setup() {
@@ -60,13 +57,16 @@ public class RelativeServiceTest {
         relationEmail = new RelationEmail();
         relationEmail.setId(0L);
         relationEmail.setRelativeEmail("a@guy.com");
+        Optional<UserAccount> userAccountOptional = Optional.of(userAccount);
+        List<RelationEmail> relatives = new ArrayList<>();
+        relatives.add(relationEmail);
+        when(userAccountRepository.findByEmail(any())).thenReturn(userAccountOptional);
+        when(relativeEmailRepository.findByEmail(any())).thenReturn(relatives);
     }
 
     @Test
     public void returnGoodAmountOfMoneyDuringWithdrawFromBank() {
         //ARRANGE
-
-        when(userAccountRepository.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount));
         //ACT
         relativeService.addAFriend(relationEmail);
         //ASSERT

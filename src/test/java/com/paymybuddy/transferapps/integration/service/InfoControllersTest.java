@@ -1,50 +1,52 @@
-package com.paymybuddy.transferapps.unit.controller;
+package com.paymybuddy.transferapps.integration.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymybuddy.transferapps.domain.RelationEmail;
+import com.paymybuddy.transferapps.domain.Transaction;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.dto.Deposit;
+import com.paymybuddy.transferapps.repositories.BankAccountRepository;
+import com.paymybuddy.transferapps.repositories.TransactionRepository;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(authorities = "ADMIN", username = "test@test.com")
 @AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class DepositControllerTest {
+public class InfoControllersTest {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private UserAccountRepository userAccountRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     private UserAccount account = new UserAccount();
-
+    private Transaction transaction = new Transaction();
     @BeforeEach
     public void setup() {
         account.setEmail("test@test.com");
@@ -53,28 +55,29 @@ public class DepositControllerTest {
         account.setRole("ADMIN");
         account.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(account);
+        transaction.setAmount(50);
+        transaction.setDate(Timestamp.from(Instant.now()));
+        transaction.setEmail("test@test.com");
+        transaction.setRelativeEmail("other");
+        transaction.setPerceiveAmountForApp(0);
+        transaction.setSendingOrReceiving(true);
+        transaction.setId(5L);
+        transactionRepository.save(transaction);
     }
 
     @Test
-    public void depositController() throws Exception {
-        mockMvc.perform(get("/userHome/depositMoney/deposit"))
+    public void transactionInfoController() throws Exception {
+        this.mockMvc.perform(get("/userHome/transactionInfo"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("depositMoney", any(Deposit.class)))
-                .andExpect(model().attribute("bankAccounts", any(ArrayList.class)));
+                .andExpect(model().attribute("transactions", any(ArrayList.class)));
     }
 
-
     @Test
-    public void depositingController() throws Exception {
-        Deposit deposit = new Deposit();
-        deposit.setAccountName("myAccount");
-        deposit.setAmount(20);
-        String body = (new ObjectMapper()).valueToTree(deposit).toString();
-        mockMvc.perform(post("/userHome/withdrawMoney/withdrawing")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        )
-                .andExpect(status().is3xxRedirection());
+    public void userAccountInfoControllers() throws Exception {
+        this.mockMvc.perform(get("/userHome/accountInfo"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("userAccount", any(UserAccount.class)))
+                .andExpect(model().attribute("relatives",  any(ArrayList.class)))
+                .andExpect(model().attribute("bankAccounts",  any(ArrayList.class)));
     }
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class RelativeService extends MainService {
+public class RelativeService {
 
 
     @Autowired
@@ -24,7 +24,10 @@ public class RelativeService extends MainService {
 
     public boolean addAFriend(RelationEmail relationEmail) {
         if (!userAccountRepository.findByEmail(relationEmail.getRelativeEmail()).isEmpty()) {
-            relationEmail.setEmail(getUserAccountSession().getEmail());
+            relationEmail.setEmail(userAccountRepository.findByEmail(
+                    MyAppUserDetailsService.currentUserEmail()
+            )
+                    .get().getEmail());
             Optional<RelationEmail> existingRelation =
                     relativeEmailRepository.findByEmailAndRelativeEmail(
                             relationEmail.getEmail(),
@@ -37,14 +40,17 @@ public class RelativeService extends MainService {
                 return false;
             }
         } else {
-            log.error("The email is not recorded in the database");
+            log.error("The email "+relationEmail.getRelativeEmail()+" is not recorded in the database");
             return false;
         }
     }
 
     public List<String> getRelatives() {
         List<String> relativeList = new ArrayList<>();
-        for (RelationEmail relative : relativeEmailRepository.findByEmail(getUserAccountSession().getEmail())) {
+        for (RelationEmail relative : relativeEmailRepository.findByEmail(userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get().getEmail())) {
             relativeList.add(relative.getRelativeEmail());
         }
         return relativeList;

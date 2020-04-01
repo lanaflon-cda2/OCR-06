@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class MoneyTransferService extends MainService {
+public class MoneyTransferService {
 
     @Autowired
     protected UserAccountRepository userAccountRepository;
@@ -29,7 +29,10 @@ public class MoneyTransferService extends MainService {
     public boolean addABankAccount(BankAccount bankAccount) {
         // TODO: create a service in order to verify the IBAN
         if (bankAccountRepository.findByAccountIban(bankAccount.getAccountIban()).isEmpty()) {
-            bankAccount.setEmail(MyAppUserDetailsService.currentUserEmail());
+            bankAccount.setEmail(userAccountRepository.findByEmail(
+                    MyAppUserDetailsService.currentUserEmail()
+            )
+                    .get().getEmail());
             bankAccountRepository.save(bankAccount);
             return true;
         } else {
@@ -40,14 +43,18 @@ public class MoneyTransferService extends MainService {
 
     public void withDrawMoneyFromBankAndAddOnTheAccount(Deposit deposit) {
         //TODO: make contact with the bank to have permission to withdraw
-        if (getUserAccountSession().getMoneyAmount() + deposit.getAmount() < 10000) {
-            getUserAccountSession().setMoneyAmount(getUserAccountSession().getMoneyAmount() + deposit.getAmount());
-            userAccountRepository.save(getUserAccountSession());
+        UserAccount userAccount = userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get();
+        if (userAccount.getMoneyAmount() + deposit.getAmount() < 10000) {
+            userAccount.setMoneyAmount(userAccount.getMoneyAmount() + deposit.getAmount());
+            userAccountRepository.save(userAccount);
             Transaction transaction = new Transaction(
                     false,
                     deposit.getDescription(),
                     deposit.getAmount(),
-                    getUserAccountSession().getEmail(),
+                    userAccount.getEmail(),
                     deposit.getAccountName(),
                     Timestamp.from(Instant.now()),
                     0.0);
@@ -58,15 +65,19 @@ public class MoneyTransferService extends MainService {
     }
 
     public void depositMoneyToBankAccount(Deposit deposit) {
-        if (getUserAccountSession().getMoneyAmount() > deposit.getAmount()) {
-            getUserAccountSession().setMoneyAmount(getUserAccountSession().getMoneyAmount() - deposit.getAmount());
-            userAccountRepository.save(getUserAccountSession());
+        UserAccount userAccount = userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get();
+        if (userAccount.getMoneyAmount() > deposit.getAmount()) {
+            userAccount.setMoneyAmount(userAccount.getMoneyAmount() - deposit.getAmount());
+            userAccountRepository.save(userAccount);
             //TODO: make contact with the bank in order to complete the transaction
             Transaction transaction = new Transaction(
                     true,
                     deposit.getDescription(),
                     -deposit.getAmount(),
-                    getUserAccountSession().getEmail(),
+                    userAccount.getEmail(),
                     deposit.getAccountName(),
                     Timestamp.from(Instant.now()),
                     0.0);
@@ -77,28 +88,32 @@ public class MoneyTransferService extends MainService {
     }
 
     public void sendMoneyToARelative(SendMoney sendMoney) {
+        UserAccount userAccount = userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get();
         double amount = 0.95 * sendMoney.getAmount();
         double taxApps = 0.05 * sendMoney.getAmount();
         //debit the account of the sender
-        if (getUserAccountSession().getMoneyAmount() > sendMoney.getAmount()) {
-            if(!userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).isEmpty()){
-                UserAccount relativeUserAccount = userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).stream().findFirst().get();
+        if (userAccount.getMoneyAmount() > sendMoney.getAmount()) {
+            if (userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).isPresent()) {
+                UserAccount relativeUserAccount = userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).get();
                 if (relativeUserAccount.getMoneyAmount() + amount <= 10000) {
-                    getUserAccountSession().setMoneyAmount(getUserAccountSession().getMoneyAmount() - amount);
-                    userAccountRepository.save(getUserAccountSession());
+                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - amount);
+                    userAccountRepository.save(userAccount);
                     //credit the account of the receiver
                     relativeUserAccount.setMoneyAmount(relativeUserAccount.getMoneyAmount() + amount);
                     userAccountRepository.save(relativeUserAccount);
                     //debit the account 5% of the amount of the transaction  and deposit on the account of the company PayMyBuddy
                     //TODO: make contact with the bank in order to complete the transaction
-                    getUserAccountSession().setMoneyAmount(getUserAccountSession().getMoneyAmount() - taxApps);
-                    userAccountRepository.save(getUserAccountSession());
+                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - taxApps);
+                    userAccountRepository.save(userAccount);
                     //recording the transaction
                     Transaction transaction = new Transaction(
                             true,
                             sendMoney.getDescription(),
                             -amount,
-                            getUserAccountSession().getEmail(),
+                            userAccount.getEmail(),
                             sendMoney.getRelativeEmail(),
                             Timestamp.from(Instant.now()),
                             -taxApps);
@@ -108,7 +123,7 @@ public class MoneyTransferService extends MainService {
                             sendMoney.getDescription(),
                             amount,
                             sendMoney.getRelativeEmail(),
-                            getUserAccountSession().getEmail(),
+                            userAccount.getEmail(),
                             Timestamp.from(Instant.now()),
                             0);
                     transactionRepository.save(transactionInverse);
@@ -126,12 +141,18 @@ public class MoneyTransferService extends MainService {
     //Getters
 
     public List<Transaction> getTransactionInfo() {
-        return transactionRepository.findByEmail(getUserAccountSession().getEmail());
+        return transactionRepository.findByEmail(userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get().getEmail());
     }
 
     public List<String> getBankAccounts() {
         List<String> bankAccountName = new ArrayList<>();
-        for (BankAccount bank : bankAccountRepository.findByEmail(getUserAccountSession().getEmail())) {
+        for (BankAccount bank : bankAccountRepository.findByEmail(userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get().getEmail())) {
             bankAccountName.add(bank.getAccountName());
         }
         return bankAccountName;

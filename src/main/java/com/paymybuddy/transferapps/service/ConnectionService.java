@@ -14,7 +14,7 @@ import java.time.Instant;
 
 @Service
 @Slf4j
-public class ConnectionService extends MainService {
+public class ConnectionService {
 
     @Autowired
     protected UserAccountRepository userAccountRepository;
@@ -35,6 +35,9 @@ public class ConnectionService extends MainService {
     }
 
     public UserAccount getAccountInfo() {
-        return getUserAccountSession();
+        return userAccountRepository.findByEmail(
+                MyAppUserDetailsService.currentUserEmail()
+        )
+                .get();
     }
 }

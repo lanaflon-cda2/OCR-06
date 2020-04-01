@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -70,7 +71,7 @@ public class MoneyTransferServiceTest {
     public void returnGoodAmountOfMoneyDuringWithdrawFromBank() {
         //ARRANGE
 
-        when(userAccountRepository.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount));
+        when(userAccountRepository.findByEmail(any())).thenReturn(java.util.Optional.ofNullable(userAccount));
         //ACT
         moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(deposit);
         //ASSERT
@@ -84,7 +85,7 @@ public class MoneyTransferServiceTest {
     public void cancelTransactionBecauseOfMissingMoney() {
         //ARRANGE
         userAccount.setMoneyAmount(10);
-        when(userAccountRepository.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount));
+        when(userAccountRepository.findByEmail(any())).thenReturn(java.util.Optional.ofNullable(userAccount));
         //ACT
         moneyTransferService.depositMoneyToBankAccount(deposit);
         //ASSERT
@@ -96,8 +97,7 @@ public class MoneyTransferServiceTest {
     @Test
     public void returnGoodAmountOfMoneyDuringSendingToBankAccount() {
         //ARRANGE
-
-        when(userAccountRepository.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount));
+        when(userAccountRepository.findByEmail(any())).thenReturn(java.util.Optional.ofNullable(userAccount));
         //ACT
         moneyTransferService.depositMoneyToBankAccount(deposit);
         verify(userAccountRepository).save( acUserAccount.capture());
@@ -114,10 +114,10 @@ public class MoneyTransferServiceTest {
         relativeUserAccount.setName("relative");
         relativeUserAccount.setEmail("r@u.com");
         relativeUserAccount.setMoneyAmount(0);
-        when(userAccountRepository.findByEmail(anyString()))
+        when(userAccountRepository.findByEmail(any()))
                 .thenReturn(java.util.Optional.ofNullable(userAccount))
                 .thenReturn(java.util.Optional.of(relativeUserAccount))
-                .thenReturn(java.util.Optional.ofNullable(userAccount));
+                .thenReturn(java.util.Optional.of(relativeUserAccount));
         //ACT
         moneyTransferService.sendMoneyToARelative(sendMoney);
         //ASSERT
@@ -131,6 +131,8 @@ public class MoneyTransferServiceTest {
     @Test
     public void addingProperlyABankAccount() {
         //ARRANGE
+        when(userAccountRepository.findByEmail(any()))
+                .thenReturn(Optional.ofNullable(userAccount));
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountIban("555444111");
         bankAccount.setAccountName("bank");
@@ -142,6 +144,5 @@ public class MoneyTransferServiceTest {
         assertThat(acBankAccount.getValue().getAccountName()).isEqualTo(bankAccount.getAccountName());
         assertThat(acBankAccount.getValue().getEmail()).isEqualTo(userAccount.getEmail());
     }
-
 
 }
