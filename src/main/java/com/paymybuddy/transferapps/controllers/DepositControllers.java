@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
@@ -19,17 +17,21 @@ public class DepositControllers {
     @Autowired
     private MoneyTransferService moneyTransferService;
 
-    @RequestMapping(value = "/userHome/depositMoney/deposit", method = RequestMethod.GET)
+    @GetMapping(value = "/userHome/depositMoney/deposit")
     public String depositMoney(Model model) {
         model.addAttribute("depositMoney", new Deposit());
         model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
         return "depositMoney";
     }
 
-    @RequestMapping(value = "/userHome/depositMoney/depositing",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String depositing(@RequestBody Deposit deposit) {
+    @PostMapping(value = "/userHome/depositMoney/depositing")
+    public String depositing( Deposit deposit) {
+        moneyTransferService.depositMoneyToBankAccount(deposit);
+        return "redirect:/userHome";
+    }
+
+    @PostMapping(value = "/userHome/depositMoney/api/depositing")
+    public String depositingApi(@RequestBody Deposit deposit) {
         moneyTransferService.depositMoneyToBankAccount(deposit);
         return "redirect:/userHome";
     }

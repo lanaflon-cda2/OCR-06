@@ -9,9 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -23,16 +21,22 @@ public class AddBankAccountControllers {
     @Autowired
     private MoneyTransferService moneyTransferService;
 
-    @RequestMapping(value = "/userHome/bankAccount/add", method = GET)
+    @GetMapping(value = "/userHome/bankAccount/add")
     public String addABankAccountToYourList(Model model) {
         model.addAttribute("bankAccount", new BankAccount());
         return "bankAccountAdd";
     }
 
-    @RequestMapping(value = "/userHome/bankAccount/adding",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String addingABankAccount(@RequestBody BankAccount bankAccount) {
+    @PostMapping(value = "/userHome/bankAccount/adding")
+    public String addingABankAccount( BankAccount bankAccount) {
+        if (moneyTransferService.addABankAccount(bankAccount) == false) {
+            return "redirect:/userHome/bankAccount/add";
+        }
+        return "redirect:/userHome";
+    }
+
+    @PostMapping(value = "/userHome/bankAccount/api/adding")
+    public String addingABankAccountApi(@RequestBody BankAccount bankAccount) {
         if (moneyTransferService.addABankAccount(bankAccount) == false) {
             return "redirect:/userHome/bankAccount/add";
         }

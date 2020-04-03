@@ -45,7 +45,7 @@ public class CreateAccountControllerTest {
         createAccount.setConfirmPassword("testGoodPass0");
         createAccount.setName("name");
         String body = (new ObjectMapper()).valueToTree(createAccount).toString();
-        mockMvc.perform(post("/account/creating")
+        mockMvc.perform(post("/account/api/creating")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(body)

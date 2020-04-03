@@ -65,7 +65,7 @@ public class AddFriendControllerTest {
         RelationEmail relationEmail = new RelationEmail();
         relationEmail.setRelativeEmail("friend@test.com");
         String body = (new ObjectMapper()).valueToTree(relationEmail).toString();
-        mockMvc.perform(post("/userHome/friend/adding")
+        mockMvc.perform(post("/userHome/friend/api/adding")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(body)

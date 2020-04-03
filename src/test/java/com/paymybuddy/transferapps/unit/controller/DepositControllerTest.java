@@ -70,7 +70,7 @@ public class DepositControllerTest {
         deposit.setAccountName("myAccount");
         deposit.setAmount(20);
         String body = (new ObjectMapper()).valueToTree(deposit).toString();
-        mockMvc.perform(post("/userHome/withdrawMoney/withdrawing")
+        mockMvc.perform(post("/userHome/withdrawMoney/api/withdrawing")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(body)

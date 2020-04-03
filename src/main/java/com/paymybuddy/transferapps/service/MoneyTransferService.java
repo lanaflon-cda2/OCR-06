@@ -13,6 +13,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 @Service
 @Slf4j
@@ -24,7 +26,6 @@ public class MoneyTransferService {
     private BankAccountRepository bankAccountRepository;
     @Autowired
     private TransactionRepository transactionRepository;
-
 
     public boolean addABankAccount(BankAccount bankAccount) {
         // TODO: create a service in order to verify the IBAN
@@ -92,8 +93,8 @@ public class MoneyTransferService {
                 MyAppUserDetailsService.currentUserEmail()
         )
                 .get();
-        double amount = 0.95 * sendMoney.getAmount();
-        double taxApps = 0.05 * sendMoney.getAmount();
+        double amount = Math.ceil(95 * sendMoney.getAmount()) / 100.0;
+        double taxApps = Math.floor(5 * sendMoney.getAmount()) / 100.0;
         //debit the account of the sender
         if (userAccount.getMoneyAmount() > sendMoney.getAmount()) {
             if (userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).isPresent()) {

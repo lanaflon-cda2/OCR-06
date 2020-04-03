@@ -65,7 +65,7 @@ public class AddBankAccountControllerTest {
         bankAccount.setAccountName("account1");
         bankAccount.setAccountIban("555444888");
         String body = (new ObjectMapper()).valueToTree(bankAccount).toString();
-        mockMvc.perform(post("/userHome/bankAccount/adding")
+        mockMvc.perform(post("/userHome/bankAccount/api/adding")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(body)
