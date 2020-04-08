@@ -1,4 +1,4 @@
-package com.paymybuddy.transferapps.integration.service;
+package com.paymybuddy.transferapps.integration;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,19 +57,16 @@ public class AddRelativeControllerTestIT {
         account.setName("user");
         account.setPassword("password");
         account.setRole("ADMIN");
-        account.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(account);
         relationAccount.setEmail("friend@test.com");
         relationAccount.setName("user2");
         relationAccount.setPassword("anotherPass");
         relationAccount.setRole("USER");
-        relationAccount.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(relationAccount);
         relationAccount2.setEmail("friend2@test.com");
         relationAccount2.setName("user3");
         relationAccount2.setPassword("anotherPass");
         relationAccount2.setRole("USER");
-        relationAccount2.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(relationAccount2);
     }
 

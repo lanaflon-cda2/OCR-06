@@ -48,7 +48,6 @@ public class AddFriendControllerTest {
         account.setName("user");
         account.setPassword("password");
         account.setRole("ADMIN");
-        account.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(account);
     }
 

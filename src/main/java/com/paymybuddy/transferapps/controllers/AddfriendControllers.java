@@ -30,12 +30,4 @@ public class AddfriendControllers {
             }
             return "redirect:/userHome";
     }
-
-    @PostMapping(value = "/userHome/friend/api/adding")
-    public String addingAFriendApi(@RequestBody RelationEmail relationEmail) {
-        if (!relativeService.addAFriend(relationEmail)) {
-            return "redirect:/userHome/friend/add";
-        }
-        return "redirect:/userHome";
-    }
 }

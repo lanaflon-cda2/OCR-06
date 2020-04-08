@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-public class GetAccountInfoControllers {
+public class ProfileControllers {
 
     @Autowired
     private ConnectionService connectionService;
@@ -21,11 +21,16 @@ public class GetAccountInfoControllers {
     @Autowired
     private RelativeService relativeService;
 
-    @GetMapping(value = "/userHome/accountInfo")
+    @GetMapping(value = "/userHome/profile")
     public String getAccountInfo(Model model) {
         model.addAttribute("userAccount", connectionService.getAccountInfo());
         model.addAttribute("relatives", relativeService.getRelatives());
         model.addAttribute("bankAccounts", moneyTransferService.getBankAccounts());
-        return "AccountInfo";
+        return "Profile";
+    }
+
+    @GetMapping(value = "/userHome/contact")
+    public String contact() {
+        return "Contact";
     }
 }

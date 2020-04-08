@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
-public class SendMoneyControllers {
+public class TransferControllers {
 
     @Autowired
     private RelativeService relativeService;
@@ -20,22 +20,17 @@ public class SendMoneyControllers {
     private MoneyTransferService moneyTransferService;
 
 
-    @GetMapping(value = "/userHome/sendMoney/send")
+    @GetMapping(value = "/userHome/transfer")
     public String sendMoney(Model model) {
         model.addAttribute("sendMoney", new SendMoney());
         model.addAttribute("relativesEmail", relativeService.getRelatives());
-        return "sendMoney";
+        model.addAttribute("transactions", moneyTransferService.getTransactionInfo());
+        return "Transfer";
     }
 
     @PostMapping(value = "/userHome/sendMoney/sending")
     public String sending(SendMoney sendMoney) {
         moneyTransferService.sendMoneyToARelative(sendMoney);
-        return "redirect:/userHome";
-    }
-
-    @PostMapping(value = "/userHome/sendMoney/api/sending")
-    public String sendingApi(@RequestBody SendMoney sendMoney) {
-        moneyTransferService.sendMoneyToARelative(sendMoney);
-        return "redirect:/userHome";
+        return "redirect:/transfer";
     }
 }

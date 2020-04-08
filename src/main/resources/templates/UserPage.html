@@ -1,46 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>List Persons</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
-          th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
-          rel="stylesheet" media="screen"/>
-
-    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
-            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
-
-    <link href="../static/css/spring-core.css"
-          th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
-    <style>
-        table {
-            font-size: 12px;
-            border: 1px solid grey;
-            padding: 5px;
-            position: center;
-            overflow-wrap: break-word;
-        }
-
-        td {
-            max-width: 90px;
-            padding: 5px;
-            height: 70px;
-        }
-    </style>
+    <title>Home</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" th:href="@{/css/transferApps.css}" />
 </head>
+
 <body>
-<div style="text-align: center;">
-    <h2>WELCOME [[${userAccount.name}]]!</h2>
-    <p><a href="/userHome/friend/add">Add a friend to your list</a></p>
-    <p><a href="/userHome/bankAccount/add">Link a bank account to your account</a></p>
-    <p><a href="/userHome/withdrawMoney/withdraw">Withdraw some money from a bank account</a></p>
-    <p><a href="/userHome/depositMoney/deposit">Deposit some money to a bank account</a></p>
-    <p><a href="/userHome/sendMoney/send">Send some money to a relative</a></p>
-    <p><a href="/userHome/accountInfo">Get account info</a></p>
-    <p><a href="/userHome/transactionInfo">Get transaction info</a></p>
-    <p>Logged in user: <b th:inline="text" class="user"> [[${#httpServletRequest.remoteUser}]] </b>
-    <form th:action="@{/userHome/disconnect}" method="POST"><input type="submit" value="Logout"/></form> </p>
+<div th:replace="header :: header"> </div>
+<div class="greyAddressLayout">
+    <p><a href="/userHome">Home</a> / </p>
 </div>
-</body>
-</html>
+    <div style="text-align: center;">
+        <h2>Welcome [[${userAccount.name}]]!</h2>
+        <p><a href="/userHome/friend/add">Add a friend to your list</a></p>
+        <p><a href="/userHome/bankAccount/add">Link a bank account to your account</a></p>
+        <p><a href="/userHome/withdrawMoney/withdraw">Withdraw some money from a bank account</a></p>
+        <p><a href="/userHome/depositMoney/deposit">Deposit some money to a bank account</a></p>
+        <p><a href="/userHome/sendMoney/send">Send some money to a relative</a></p>
+        <p><a href="/userHome/accountInfo">Get account info</a></p>
+        <p><a href="/userHome/transactionInfo">Get transaction info</a></p>
+    </div>
+    </body>
+    </html>

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-public class LogControllers {
+public class HomeControllers {
 
     @Autowired
     private ConnectionService connectionService;

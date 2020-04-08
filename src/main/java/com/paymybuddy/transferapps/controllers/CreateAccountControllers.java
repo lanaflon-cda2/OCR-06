@@ -34,13 +34,4 @@ public class CreateAccountControllers {
         }
         return "redirect:/account/create";
     }
-
-    @PostMapping(value = "/account/api/creating")
-    public String creatingAccountApi(@Valid @RequestBody CreateAccount createAccount, BindingResult result) {
-        if (!result.hasErrors()) {
-            connectionService.createAnAccount(createAccount);
-            return "redirect:/";
-        }
-        return "redirect:/account/create";
-    }
 }

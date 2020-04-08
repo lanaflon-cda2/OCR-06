@@ -148,14 +148,10 @@ public class MoneyTransferService {
                 .get().getEmail());
     }
 
-    public List<String> getBankAccounts() {
-        List<String> bankAccountName = new ArrayList<>();
-        for (BankAccount bank : bankAccountRepository.findByEmail(userAccountRepository.findByEmail(
+    public List<BankAccount> getBankAccounts() {
+        return bankAccountRepository.findByEmail(userAccountRepository.findByEmail(
                 MyAppUserDetailsService.currentUserEmail()
         )
-                .get().getEmail())) {
-            bankAccountName.add(bank.getAccountName());
-        }
-        return bankAccountName;
+                .get().getEmail());
     }
 }

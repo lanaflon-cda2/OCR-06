@@ -29,10 +29,4 @@ public class DepositControllers {
         moneyTransferService.depositMoneyToBankAccount(deposit);
         return "redirect:/userHome";
     }
-
-    @PostMapping(value = "/userHome/depositMoney/api/depositing")
-    public String depositingApi(@RequestBody Deposit deposit) {
-        moneyTransferService.depositMoneyToBankAccount(deposit);
-        return "redirect:/userHome";
-    }
 }

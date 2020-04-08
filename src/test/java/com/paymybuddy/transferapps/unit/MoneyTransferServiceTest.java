@@ -55,7 +55,6 @@ public class MoneyTransferServiceTest {
         acUserAccount = ArgumentCaptor.forClass(UserAccount.class);
         userAccount = new UserAccount();
         userAccount.setMoneyAmount(100);
-        userAccount.setDatelog(Timestamp.from(Instant.now()));
         userAccount.setEmail("test@Mock.com");
         userAccount.setName("John");
         deposit = new Deposit();

@@ -30,9 +30,4 @@ public class WithDrawMoneyControllers {
         return "redirect:/userHome";
 
     }
-    @PostMapping(value = "/userHome/withdrawMoney/api/withdrawing")
-    public String withdrawingApi(@RequestBody Deposit deposit) {
-        moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(deposit);
-        return "redirect:/userHome";
-    }
 }

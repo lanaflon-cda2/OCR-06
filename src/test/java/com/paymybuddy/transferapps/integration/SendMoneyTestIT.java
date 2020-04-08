@@ -1,4 +1,4 @@
-package com.paymybuddy.transferapps.integration.service;
+package com.paymybuddy.transferapps.integration;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +62,6 @@ public class SendMoneyTestIT {
         account.setPassword("password");
         account.setRole("ADMIN");
         account.setMoneyAmount(50);
-        account.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(account);
 
         account2.setEmail("friend@test.com");
@@ -70,7 +69,6 @@ public class SendMoneyTestIT {
         account2.setPassword("password");
         account2.setRole("ADMIN");
         account2.setMoneyAmount(50);
-        account2.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(account2);
 
         relationEmail.setId(1L);

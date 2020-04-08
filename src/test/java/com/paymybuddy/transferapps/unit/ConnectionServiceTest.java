@@ -62,7 +62,6 @@ public class ConnectionServiceTest {
         verify(userAccountRepository).save(acUserAccount.capture());
         assertThat(encoder.matches("pass", acUserAccount.getValue().getPassword())).isTrue();
         assertThat(acUserAccount.getValue().getName()).isEqualTo("name");
-        assertThat(acUserAccount.getValue().getDatelog()).isBefore(Timestamp.from(Instant.now()));
     }
 
     @Test

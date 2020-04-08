@@ -51,7 +51,6 @@ public class RelativeServiceTest {
         acUserAccount = ArgumentCaptor.forClass(RelationEmail.class);
         userAccount = new UserAccount();
         userAccount.setMoneyAmount(100);
-        userAccount.setDatelog(Timestamp.from(Instant.now()));
         userAccount.setEmail("test@Mock.com");
         userAccount.setName("John");
         relationEmail = new RelationEmail();

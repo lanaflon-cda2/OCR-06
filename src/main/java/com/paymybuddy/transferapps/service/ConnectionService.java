@@ -25,7 +25,6 @@ public class ConnectionService {
             userAccountRepository.save(new UserAccount(
                     createAccount.getEmail(),
                     createAccount.getName(), 0.0,
-                    Timestamp.from(Instant.ofEpochMilli(0)),
                     "USER",
                     encoder.encode(createAccount.getPassword()
                     )));

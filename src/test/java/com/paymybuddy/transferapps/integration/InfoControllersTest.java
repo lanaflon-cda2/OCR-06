@@ -1,4 +1,4 @@
-package com.paymybuddy.transferapps.integration.service;
+package com.paymybuddy.transferapps.integration;
 
 import com.paymybuddy.transferapps.domain.Transaction;
 import com.paymybuddy.transferapps.domain.UserAccount;
@@ -53,7 +53,6 @@ public class InfoControllersTest {
         account.setName("user");
         account.setPassword("password");
         account.setRole("ADMIN");
-        account.setDatelog(Timestamp.from(Instant.now()));
         userAccountRepository.save(account);
         transaction.setAmount(50);
         transaction.setDate(Timestamp.from(Instant.now()));

@@ -34,12 +34,4 @@ public class AddBankAccountControllers {
         }
         return "redirect:/userHome";
     }
-
-    @PostMapping(value = "/userHome/bankAccount/api/adding")
-    public String addingABankAccountApi(@RequestBody BankAccount bankAccount) {
-        if (moneyTransferService.addABankAccount(bankAccount) == false) {
-            return "redirect:/userHome/bankAccount/add";
-        }
-        return "redirect:/userHome";
-    }
 }

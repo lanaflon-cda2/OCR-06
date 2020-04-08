@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Add a medical record</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
-          th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
-          rel="stylesheet" media="screen"/>
-
-    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
-            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
-
-    <link href="../static/css/spring-core.css"
-          th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
+    <title>Depositing</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" th:href="@{/css/transferApps.css}" />
 </head>
 <body>
 <div class="container">
@@ -26,10 +17,10 @@
                     <td>Select BankAccount:</td>
                     <td>
                         <select th:field="*{accountName}">
-                            <option value=""> --</option>
+                            <option value=""> select a bank Account</option>
                             <option th:each="bankAccountName : ${bankAccounts}"
-                                    th:value="${bankAccountName}"
-                                    th:utext="${bankAccountName}"/>
+                                    th:value="${bankAccountName.accountName}"
+                                    th:utext="${bankAccountName.accountName}"/>
                         </select>
                     </td>
                 </tr>
