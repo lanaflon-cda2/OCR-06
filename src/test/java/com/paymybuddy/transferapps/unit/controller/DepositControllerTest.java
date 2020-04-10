@@ -1,31 +1,22 @@
 package com.paymybuddy.transferapps.unit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.dto.Deposit;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.hamcrest.Matchers.any;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,8 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(authorities = "ADMIN", username = "test@test.com")
 @AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class DepositControllerTest {
+public class DepositControllerTest extends AbstractIT {
 
     @Autowired
     private MockMvc mvc;

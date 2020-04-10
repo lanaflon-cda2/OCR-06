@@ -1,16 +1,13 @@
 package com.paymybuddy.transferapps.integration;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymybuddy.transferapps.domain.BankAccount;
 import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.dto.Deposit;
 import com.paymybuddy.transferapps.dto.SendMoney;
 import com.paymybuddy.transferapps.repositories.BankAccountRepository;
 import com.paymybuddy.transferapps.repositories.RelativeEmailRepository;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +19,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;

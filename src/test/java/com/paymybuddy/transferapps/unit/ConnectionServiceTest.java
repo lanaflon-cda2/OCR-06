@@ -6,8 +6,6 @@ import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.dto.CreateAccount;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
 import com.paymybuddy.transferapps.service.ConnectionService;
-import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +13,7 @@ import org.mockito.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)

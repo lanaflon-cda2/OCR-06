@@ -1,43 +1,48 @@
 package com.paymybuddy.transferapps.unit.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymybuddy.transferapps.config.SecurityConfiguration;
+import com.paymybuddy.transferapps.controllers.AddBankAccountControllers;
 import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.repositories.RelativeEmailRepository;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer.sharedHttpSession;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(authorities = "ADMIN", username = "test@test.com")
 @AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class AddFriendControllerTest {
+@WebMvcTest(
+        controllers = AddBankAccountControllers.class
+)
+@ContextConfiguration(
+        classes = SecurityConfiguration.class
+)
+public class AddFriendControllerTest extends AbstractIT {
+
+    @MockBean
+    MoneyTransferService service;
 
     @Autowired
     private UserAccountRepository userAccountRepository;
@@ -83,8 +88,8 @@ public class AddFriendControllerTest {
         relationEmail.setRelativeEmail("friend@test.com");
         mvc.perform(post("/userHome/friend/adding")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("email",relationEmail.getEmail())
-                .param("relativeEmail",relationEmail.getRelativeEmail())
+                .param("email", relationEmail.getEmail())
+                .param("relativeEmail", relationEmail.getRelativeEmail())
                 .requestAttr("relationEmail", relationEmail)
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )

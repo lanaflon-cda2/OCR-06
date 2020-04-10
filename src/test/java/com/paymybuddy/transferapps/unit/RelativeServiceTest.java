@@ -1,12 +1,9 @@
 package com.paymybuddy.transferapps.unit;
 
 
-import com.paymybuddy.transferapps.domain.BankAccount;
 import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.repositories.BankAccountRepository;
 import com.paymybuddy.transferapps.repositories.RelativeEmailRepository;
-import com.paymybuddy.transferapps.repositories.TransactionRepository;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
 import com.paymybuddy.transferapps.service.RelativeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,12 +13,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
