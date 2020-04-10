@@ -6,7 +6,7 @@
     <a href="/userHome/transfer">Transfer</a>
     <a href="/userHome/profile">Profile</a>
     <a href="/userHome/contact">Contact</a>
-    Logged:[[${#httpServletRequest.remoteUser}]]
-    <a th:action="@{/userHome/disconnect}" method="POST"><input type="submit" value="Log Off"/></a>
+    Logged: [[${#httpServletRequest.remoteUser}]]
+    <form th:action="@{/userHome/disconnect}" method="POST"><input type="submit" value="Logout"/></form>
     </header>
     </div>

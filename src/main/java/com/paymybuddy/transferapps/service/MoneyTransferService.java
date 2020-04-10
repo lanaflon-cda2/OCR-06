@@ -93,21 +93,21 @@ public class MoneyTransferService {
                 MyAppUserDetailsService.currentUserEmail()
         )
                 .get();
-        double amount = Math.ceil(95 * sendMoney.getAmount()) / 100.0;
-        double taxApps = Math.floor(5 * sendMoney.getAmount()) / 100.0;
+        double amount = Math.ceil(95 * sendMoney.getAmount());
+        double taxApps = Math.floor(5 * sendMoney.getAmount());
         //debit the account of the sender
         if (userAccount.getMoneyAmount() > sendMoney.getAmount()) {
             if (userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).isPresent()) {
                 UserAccount relativeUserAccount = userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).get();
-                if (relativeUserAccount.getMoneyAmount() + amount <= 10000) {
-                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - amount);
+                if (relativeUserAccount.getMoneyAmount() + amount/100 <= 10000) {
+                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - amount/100);
                     userAccountRepository.save(userAccount);
                     //credit the account of the receiver
-                    relativeUserAccount.setMoneyAmount(relativeUserAccount.getMoneyAmount() + amount);
+                    relativeUserAccount.setMoneyAmount(relativeUserAccount.getMoneyAmount() + amount/100);
                     userAccountRepository.save(relativeUserAccount);
                     //debit the account 5% of the amount of the transaction  and deposit on the account of the company PayMyBuddy
                     //TODO: make contact with the bank in order to complete the transaction
-                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - taxApps);
+                    userAccount.setMoneyAmount((userAccount.getMoneyAmount()*100 - taxApps)/100);
                     userAccountRepository.save(userAccount);
                     //recording the transaction
                     Transaction transaction = new Transaction(

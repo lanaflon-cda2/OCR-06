@@ -1,9 +1,7 @@
 package com.paymybuddy.transferapps.integration;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymybuddy.transferapps.domain.BankAccount;
-import com.paymybuddy.transferapps.domain.Transaction;
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.dto.Deposit;
 import com.paymybuddy.transferapps.repositories.BankAccountRepository;
@@ -21,9 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(authorities = "ADMIN", username = "test@test.com")
 @AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class DepositTestIT {
+public class WithdrawTestIT {
 
     @Autowired
     private UserAccountRepository userAccountRepository;
@@ -66,17 +61,6 @@ public class DepositTestIT {
 
     }
 
-    @Test
-    public void accessDepositFormWithSuccess() throws Exception {
-        mvc.perform(get("/userHome/depositMoney/deposit")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("amount", "50")
-                .content("amount")
-                .sessionAttr("dto", new Deposit())
-        )
-                .andExpect(status().isOk())
-                .andExpect(view().name("depositMoney"));
-    }
 
     @Test
     public void accessWithdrawFormWithSuccess() throws Exception {
@@ -91,17 +75,16 @@ public class DepositTestIT {
     }
 
     @Test
-    public void depositMoneyWithSuccess() throws Exception {
-        Deposit deposit = new Deposit();
-        deposit.setAccountName("myAccount");
-        deposit.setAmount(20);
-        deposit.setDescription("a description");
-        mvc.perform(post("/userHome/depositMoney/depositing")
+    public void withdrawMoneyWithSuccess() throws Exception {
+        Deposit withdraw = new Deposit();
+        withdraw.setAccountName("myAccount");
+        withdraw.setDescription("a description");
+        mvc.perform(post("/userHome/withdrawMoney/withdrawing")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",deposit.getAccountName())
-                .param("description",deposit.getDescription())
+                .param("accountName",withdraw.getAccountName())
+                .param("description",withdraw.getDescription())
                 .param("amount", "20.00")
-                .requestAttr("deposit", deposit)
+                .requestAttr("withdraw", withdraw)
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
@@ -110,20 +93,20 @@ public class DepositTestIT {
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(transactionRepository.findByEmail("test@test.com")).hasSize(1);
-        assertThat(transactionRepository.findByEmail("test@test.com").get(0).getDescription()).isEqualTo(deposit.getDescription());
-        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(30);
+        assertThat(transactionRepository.findByEmail("test@test.com").get(0).getDescription()).isEqualTo(withdraw.getDescription());
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(70);
     }
 
     @Test
-    public void depositMoney2timesWithSuccess() throws Exception {
-        Deposit deposit = new Deposit();
-        deposit.setAccountName("myAccount");
-        mvc.perform(post("/userHome/depositMoney/depositing")
+    public void withdrawMoney2timesWithSuccess() throws Exception {
+        Deposit withdraw = new Deposit();
+        withdraw.setAccountName("myAccount");
+        mvc.perform(post("/userHome/withdrawMoney/withdrawing")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",deposit.getAccountName())
-                .param("description",deposit.getDescription())
+                .param("accountName",withdraw.getAccountName())
+                .param("description",withdraw.getDescription())
                 .param("amount", "20.00")
-                .requestAttr("deposit", deposit)
+                .requestAttr("withdraw", withdraw)
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
@@ -131,31 +114,31 @@ public class DepositTestIT {
 
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
-        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(30);
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(70);
 
-        mvc.perform(post("/userHome/depositMoney/depositing")
+        mvc.perform(post("/userHome/withdrawMoney/withdrawing")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",deposit.getAccountName())
-                .param("description",deposit.getDescription())
+                .param("accountName",withdraw.getAccountName())
+                .param("description",withdraw.getDescription())
                 .param("amount", "20.00")
-                .requestAttr("deposit", deposit)
+                .requestAttr("withdraw", withdraw)
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/userHome"));
-        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(10);
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(90);
     }
 
     @Test
-    public void depositMoreMoneyThanItsOwnAndReturnError() throws Exception {
-        Deposit deposit = new Deposit();
-        deposit.setAccountName("myAccount");
-        mvc.perform(post("/userHome/depositMoney/depositing")
+    public void returnErrorIfMoneyAmountBreakTheMaximumAmountPossible() throws Exception {
+        Deposit withdraw = new Deposit();
+        withdraw.setAccountName("myAccount");
+        mvc.perform(post("/userHome/withdrawMoney/withdrawing")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",deposit.getAccountName())
-                .param("description",deposit.getDescription())
-                .param("amount", "100.00")
-                .requestAttr("deposit", deposit)
+                .param("accountName",withdraw.getAccountName())
+                .param("description",withdraw.getDescription())
+                .param("amount", "11000.00")
+                .requestAttr("withdraw", withdraw)
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())

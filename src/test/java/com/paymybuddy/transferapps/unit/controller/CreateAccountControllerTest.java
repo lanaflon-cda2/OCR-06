@@ -44,13 +44,16 @@ public class CreateAccountControllerTest {
         createAccount.setPassword("testGoodPass0");
         createAccount.setConfirmPassword("testGoodPass0");
         createAccount.setName("name");
-        String body = (new ObjectMapper()).valueToTree(createAccount).toString();
-        mockMvc.perform(post("/account/api/creating")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
+        mockMvc.perform(post("/account/creating")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", createAccount.getName())
+                .param("email", createAccount.getEmail())
+                .param("password", createAccount.getPassword())
+                .param("confirmPassword", createAccount.getConfirmPassword())
+                .requestAttr("bankAccount", createAccount)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
         )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/"));
     }
 }

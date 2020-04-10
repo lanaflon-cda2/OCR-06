@@ -128,6 +128,56 @@ public class MoneyTransferServiceTest {
     }
 
     @Test
+    public void returnErrorIfAmountOfMoneyDuringSendingIsGreaterThanTheDepot() {
+        //ARRANGE
+        UserAccount relativeUserAccount = new UserAccount();
+        relativeUserAccount.setName("relative");
+        relativeUserAccount.setEmail("r@u.com");
+        relativeUserAccount.setMoneyAmount(0);
+        when(userAccountRepository.findByEmail(any()))
+                .thenReturn(java.util.Optional.ofNullable(userAccount));
+        //ACT
+        sendMoney.setAmount(110);
+        moneyTransferService.sendMoneyToARelative(sendMoney);
+        //ASSERT
+        assertThat(userAccount.getMoneyAmount()).isEqualTo(100);
+    }
+
+    @Test
+    public void returnErrorIfNoSuchRelativeInDatabase() {
+        //ARRANGE
+        UserAccount relativeUserAccount = new UserAccount();
+        relativeUserAccount.setName("relative");
+        relativeUserAccount.setEmail("r@u.com");
+        relativeUserAccount.setMoneyAmount(0);
+        when(userAccountRepository.findByEmail(any()))
+                .thenReturn(java.util.Optional.ofNullable(userAccount))
+                .thenReturn(java.util.Optional.ofNullable(null));
+        //ACT
+        moneyTransferService.sendMoneyToARelative(sendMoney);
+        //ASSERT
+        assertThat(userAccount.getMoneyAmount()).isEqualTo(100);
+    }
+
+    @Test
+    public void returnErrorIfTooMuchMoneyOnRelativeAccount() {
+        //ARRANGE
+        UserAccount relativeUserAccount = new UserAccount();
+        relativeUserAccount.setName("relative");
+        relativeUserAccount.setEmail("r@u.com");
+        relativeUserAccount.setMoneyAmount(9990);
+        when(userAccountRepository.findByEmail(any()))
+                .thenReturn(java.util.Optional.ofNullable(userAccount))
+                .thenReturn(java.util.Optional.of(relativeUserAccount))
+                .thenReturn(java.util.Optional.of(relativeUserAccount));
+        //ACT
+        sendMoney.setAmount(110);
+        moneyTransferService.sendMoneyToARelative(sendMoney);
+        //ASSERT
+        assertThat(userAccount.getMoneyAmount()).isEqualTo(100);
+    }
+
+    @Test
     public void addingProperlyABankAccount() {
         //ARRANGE
         when(userAccountRepository.findByEmail(any()))

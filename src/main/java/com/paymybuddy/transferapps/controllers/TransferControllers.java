@@ -20,7 +20,7 @@ public class TransferControllers {
     private MoneyTransferService moneyTransferService;
 
 
-    @GetMapping(value = "/userHome/transfer")
+    @RequestMapping(value = "/userHome/transfer")
     public String sendMoney(Model model) {
         model.addAttribute("sendMoney", new SendMoney());
         model.addAttribute("relativesEmail", relativeService.getRelatives());

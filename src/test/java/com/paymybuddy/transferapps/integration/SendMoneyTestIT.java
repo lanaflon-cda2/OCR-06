@@ -85,14 +85,13 @@ public class SendMoneyTestIT {
 
     @Test
     public void accessSendMoneyFormWithSuccess() throws Exception {
-        mvc.perform(get("/userHome/sendMoney/send")
+        mvc.perform(get("/userHome/transfer")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("amount", "50")
                 .content("amount")
                 .sessionAttr("dto", new SendMoney())
         )
                 .andExpect(status().isOk())
-                .andExpect(view().name("sendMoney"));
+                .andExpect(view().name("Transfer"));
     }
 
 
@@ -102,15 +101,83 @@ public class SendMoneyTestIT {
         sendMoney.setRelativeEmail("friend@test.com");
         sendMoney.setAmount(20);
         sendMoney.setDescription("a good transfer");
-        String body = (new ObjectMapper()).valueToTree(sendMoney).toString();
-        mvc.perform(post("/userHome/sendMoney/api/sending")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/sendMoney/sending")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("relativeEmail",sendMoney.getRelativeEmail())
+                .param("description",sendMoney.getDescription())
+                .param("amount", "20.00")
+                .requestAttr("deposit", sendMoney)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/transfer"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(30);
+    }
+    @Test
+    public void errorIfTooMuchMoneyInTheRelativeAccount() throws Exception {
+        account2.setMoneyAmount(9990);
+        userAccountRepository.save(account2);
+        SendMoney sendMoney = new SendMoney();
+        sendMoney.setRelativeEmail("friend@test.com");
+        sendMoney.setAmount(20);
+        sendMoney.setDescription("a good transfer");
+        mvc.perform(post("/userHome/sendMoney/sending")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("relativeEmail",sendMoney.getRelativeEmail())
+                .param("description",sendMoney.getDescription())
+                .param("amount", "20.00")
+                .requestAttr("deposit", sendMoney)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/transfer"));
+        assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
+        assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(50);
+        assertThat(userAccountRepository.findByEmail("friend@test.com").get().getMoneyAmount()).isEqualTo(9990);
+    }
+    @Test
+    public void errorIfNotEnoughMoneyOnTheAccount() throws Exception {
+        SendMoney sendMoney = new SendMoney();
+        sendMoney.setRelativeEmail("friend@test.com");
+        sendMoney.setDescription("a good transfer");
+        mvc.perform(post("/userHome/sendMoney/sending")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("relativeEmail",sendMoney.getRelativeEmail())
+                .param("description",sendMoney.getDescription())
+                .param("amount", "200.00")
+                .requestAttr("deposit", sendMoney)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/transfer"));
+        assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
+        assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(50);
+        assertThat(userAccountRepository.findByEmail("friend@test.com").get().getMoneyAmount()).isEqualTo(50);
+    }
+
+    @Test
+    public void errorIfNoExistingRelation() throws Exception {
+        SendMoney sendMoney = new SendMoney();
+        sendMoney.setRelativeEmail("noname@test.com");
+        sendMoney.setDescription("a good transfer");
+        mvc.perform(post("/userHome/sendMoney/sending")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("relativeEmail",sendMoney.getRelativeEmail())
+                .param("description",sendMoney.getDescription())
+                .param("amount", "10.00")
+                .requestAttr("deposit", sendMoney)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/transfer"));
+        assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
+        assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(50);
+        assertThat(userAccountRepository.findByEmail("friend@test.com").get().getMoneyAmount()).isEqualTo(50);
     }
 
     @Test
@@ -119,23 +186,31 @@ public class SendMoneyTestIT {
         sendMoney.setRelativeEmail("friend@test.com");
         sendMoney.setAmount(20);
         sendMoney.setDescription("a good transfer");
-        String body = (new ObjectMapper()).valueToTree(sendMoney).toString();
-        mvc.perform(post("/userHome/sendMoney/api/sending")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/sendMoney/sending")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("relativeEmail",sendMoney.getRelativeEmail())
+                .param("description",sendMoney.getDescription())
+                .param("amount", "20.00")
+                .requestAttr("deposit", sendMoney)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/transfer"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(30);
 
         sendMoney.setAmount(10);
-        body = (new ObjectMapper()).valueToTree(sendMoney).toString();
-        mvc.perform(post("/userHome/sendMoney/api/sending")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
-        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(20);
+        mvc.perform(post("/userHome/sendMoney/sending")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("relativeEmail",sendMoney.getRelativeEmail())
+                .param("description",sendMoney.getDescription())
+                .param("amount", "20.00")
+                .requestAttr("deposit", sendMoney)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/transfer"));
+        assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(10);
     }
 }

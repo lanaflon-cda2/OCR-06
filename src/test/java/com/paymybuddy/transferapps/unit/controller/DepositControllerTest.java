@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DepositControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mvc;
     @Autowired
     private UserAccountRepository userAccountRepository;
 
@@ -55,8 +55,8 @@ public class DepositControllerTest {
     }
 
     @Test
-    public void depositController() throws Exception {
-        mockMvc.perform(get("/userHome/depositMoney/deposit"))
+    public void withdrawController() throws Exception {
+        mvc.perform(get("/userHome/depositMoney/deposit"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("depositMoney", any(Deposit.class)))
                 .andExpect(model().attribute("bankAccounts", any(ArrayList.class)));
@@ -64,16 +64,19 @@ public class DepositControllerTest {
 
 
     @Test
-    public void depositingController() throws Exception {
+    public void withdrawingController() throws Exception {
         Deposit deposit = new Deposit();
         deposit.setAccountName("myAccount");
         deposit.setAmount(20);
-        String body = (new ObjectMapper()).valueToTree(deposit).toString();
-        mockMvc.perform(post("/userHome/withdrawMoney/api/withdrawing")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
+        mvc.perform(post("/userHome/depositMoney/depositing")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("accountName", deposit.getAccountName())
+                .param("description", deposit.getDescription())
+                .param("amount", "20.00")
+                .requestAttr("deposit", deposit)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
         )
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
     }
 }

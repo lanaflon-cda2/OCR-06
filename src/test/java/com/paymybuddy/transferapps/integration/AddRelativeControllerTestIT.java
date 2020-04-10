@@ -86,12 +86,15 @@ public class AddRelativeControllerTestIT {
     public void postNewFriendWithSuccess() throws Exception {
         RelationEmail relationEmail = new RelationEmail();
         relationEmail.setRelativeEmail("friend@test.com");
-        String body = (new ObjectMapper()).valueToTree(relationEmail).toString();
-        mvc.perform(post("/userHome/friend/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/friend/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email",relationEmail.getEmail())
+                .param("relativeEmail",relationEmail.getRelativeEmail())
+                .requestAttr("relationEmail", relationEmail)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+        .andExpect(status().isFound())
+        .andExpect(view().name("redirect:/userHome"));
         assertThat(relativeEmailRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(relativeEmailRepository.findByEmail("test@test.com").get(0).getRelativeEmail()).isEqualTo("friend@test.com");
     }
@@ -100,24 +103,28 @@ public class AddRelativeControllerTestIT {
     public void post2NewFriendWithSuccess() throws Exception {
         RelationEmail relationEmail = new RelationEmail();
         relationEmail.setRelativeEmail("friend@test.com");
-        String body = (new ObjectMapper()).valueToTree(relationEmail).toString();
-
-        mvc.perform(post("/userHome/friend/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
-
+        mvc.perform(post("/userHome/friend/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email",relationEmail.getEmail())
+                .param("relativeEmail",relationEmail.getRelativeEmail())
+                .requestAttr("relationEmail", relationEmail)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(relativeEmailRepository.findByEmail("test@test.com")).hasSize(1);
 
         relationEmail.setId(85L);
         relationEmail.setRelativeEmail("friend2@test.com");
-        body = (new ObjectMapper()).valueToTree(relationEmail).toString();
-        mvc.perform(post("/userHome/friend/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/friend/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email",relationEmail.getEmail())
+                .param("relativeEmail",relationEmail.getRelativeEmail())
+                .requestAttr("relationEmail", relationEmail)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(relativeEmailRepository.findByEmail("test@test.com")).hasSize(2);
         assertThat(relativeEmailRepository.findByEmailAndRelativeEmail("test@test.com","friend@test.com")).isPresent();
         assertThat(relativeEmailRepository.findByEmailAndRelativeEmail("test@test.com","friend2@test.com")).isPresent();

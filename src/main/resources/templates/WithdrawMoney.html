@@ -5,11 +5,15 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" th:href="@{/css/transferApps.css}" />
 </head>
+<div th:replace="header :: header">
+</div>
+<div class="greyAddressLayout">
+    <p><a href="/userHome">Home</a> / <a href="/userHome/profile">Profile</a> / <a href="/userHome/withdrawMoney/deposit">Withdraw Money</a></p>
+</div>
 <body>
 <div class="container">
 
     <h2>Withdrawing Money from a bank</h2>
-
     <div>
         <form name='f' th:object="${withdrawMoney}" th:action="@{/userHome/withdrawMoney/withdrawing}"method='POST'>
             <table>

@@ -1,11 +1,8 @@
 package com.paymybuddy.transferapps.unit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymybuddy.transferapps.domain.BankAccount;
-import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,16 +11,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
-import static org.hamcrest.Matchers.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,11 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(authorities = "ADMIN", username = "test@test.com")
 @AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AddBankAccountControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mvc;
     @Autowired
     private UserAccountRepository userAccountRepository;
 
@@ -50,12 +40,6 @@ public class AddBankAccountControllerTest {
         userAccountRepository.save(account);
     }
 
-    @Test
-    public void addBankAccountController() throws Exception {
-        mockMvc.perform(get("/userHome/bankAccount/add"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("bankAccount", any(BankAccount.class)));
-    }
 
 
     @Test
@@ -63,12 +47,15 @@ public class AddBankAccountControllerTest {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountName("account1");
         bankAccount.setAccountIban("555444888");
-        String body = (new ObjectMapper()).valueToTree(bankAccount).toString();
-        mockMvc.perform(post("/userHome/bankAccount/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
+        mvc.perform(post("/userHome/bankAccount/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("accountName",bankAccount.getAccountName())
+                .param("accountIban",bankAccount.getAccountIban())
+                .param("email", bankAccount.getEmail())
+                .requestAttr("bankAccount", bankAccount)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
         )
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
     }
 }

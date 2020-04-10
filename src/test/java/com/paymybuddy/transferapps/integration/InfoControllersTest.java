@@ -65,15 +65,8 @@ public class InfoControllersTest {
     }
 
     @Test
-    public void transactionInfoController() throws Exception {
-        this.mockMvc.perform(get("/userHome/transactionInfo"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("transactions", any(ArrayList.class)));
-    }
-
-    @Test
     public void userAccountInfoControllers() throws Exception {
-        this.mockMvc.perform(get("/userHome/accountInfo"))
+        this.mockMvc.perform(get("/userHome/profile"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("userAccount", any(UserAccount.class)))
                 .andExpect(model().attribute("relatives",  any(ArrayList.class)))

@@ -73,12 +73,16 @@ public class AddBankAccountTestIT {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountName("account1");
         bankAccount.setAccountIban("555444888");
-        String body = (new ObjectMapper()).valueToTree(bankAccount).toString();
-        mvc.perform(post("/userHome/bankAccount/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/bankAccount/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("accountName",bankAccount.getAccountName())
+                .param("accountIban",bankAccount.getAccountIban())
+                .param("email", bankAccount.getEmail())
+                .requestAttr("bankAccount", bankAccount)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("555444888")).isPresent();
     }
@@ -88,21 +92,30 @@ public class AddBankAccountTestIT {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountName("account1");
         bankAccount.setAccountIban("555444888");
-        String body = (new ObjectMapper()).valueToTree(bankAccount).toString();
-        mvc.perform(post("/userHome/bankAccount/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/bankAccount/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("accountName",bankAccount.getAccountName())
+                .param("accountIban",bankAccount.getAccountIban())
+                .param("email", bankAccount.getEmail())
+                .requestAttr("bankAccount", bankAccount)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
+
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("555444888")).isPresent();
         bankAccount.setAccountIban("555555888");
-        body = (new ObjectMapper()).valueToTree(bankAccount).toString();
-        mvc.perform(post("/userHome/bankAccount/api/adding")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(body)
-        );
+        mvc.perform(post("/userHome/bankAccount/adding")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("accountName",bankAccount.getAccountName())
+                .param("accountIban",bankAccount.getAccountIban())
+                .param("email", bankAccount.getEmail())
+                .requestAttr("bankAccount", bankAccount)
+                .contentType(MediaType.APPLICATION_XHTML_XML)
+        )
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(2);
         assertThat(bankAccountRepository.findByAccountIban("555555888")).isPresent();
     }
