@@ -191,7 +191,7 @@ public class MoneyTransferServiceTest {
         verify(bankAccountRepository, times(1)).save(acBankAccount.capture());
         assertThat(acBankAccount.getValue().getAccountIban()).isEqualTo(bankAccount.getAccountIban());
         assertThat(acBankAccount.getValue().getAccountName()).isEqualTo(bankAccount.getAccountName());
-        assertThat(acBankAccount.getValue().getEmail()).isEqualTo(userAccount.getEmail());
+        assertThat(acBankAccount.getValue().getEmail()).isEqualTo(null);
     }
 
 }

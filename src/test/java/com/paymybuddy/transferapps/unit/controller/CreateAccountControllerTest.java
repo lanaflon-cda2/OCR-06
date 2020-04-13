@@ -1,59 +1,61 @@
 package com.paymybuddy.transferapps.unit.controller;
 
-import static org.hamcrest.Matchers.any;
-import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymybuddy.transferapps.controllers.CreateAccountControllers;
+import com.paymybuddy.transferapps.domain.BankAccount;
 import com.paymybuddy.transferapps.dto.CreateAccount;
+import com.paymybuddy.transferapps.service.ConnectionService;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
 public class CreateAccountControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Mock
+    private ConnectionService connectionService;
+    @Mock
+    private Model model;
+    @Mock
+    private BindingResult bindingResult;
 
+    @InjectMocks
+    CreateAccountControllers createAccountControllers = new CreateAccountControllers();
 
     @Test
-    public void createAccount() throws Exception {
-        mockMvc.perform(get("/account/create"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("createAccount", any(CreateAccount.class)));
+    public void createAccount() {
+        String result = createAccountControllers.createAccount(model);
+        verify(model, (times(1))).addAttribute(eq("createAccount"), ArgumentMatchers.any());
+
+        assertThat(result).isEqualTo("CreateAccount");
     }
 
     @Test
-    public void creatingAccount() throws Exception {
-        CreateAccount createAccount =new CreateAccount();
-        createAccount.setEmail("j@test.com");
-        createAccount.setPassword("testGoodPass0");
-        createAccount.setConfirmPassword("testGoodPass0");
-        createAccount.setName("name");
-        mockMvc.perform(post("/account/creating")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", createAccount.getName())
-                .param("email", createAccount.getEmail())
-                .param("password", createAccount.getPassword())
-                .param("confirmPassword", createAccount.getConfirmPassword())
-                .requestAttr("bankAccount", createAccount)
-                .contentType(MediaType.APPLICATION_XHTML_XML)
-        )
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/"));
+    public void creatingAccount() {
+        CreateAccount createAccount = new CreateAccount();
+
+        String result = createAccountControllers.creatingAccount(createAccount, bindingResult);
+
+        assertThat(result).isEqualTo("redirect:/");
+    }
+
+    @Test
+    public void creatingAccountwithWrongData() {
+        CreateAccount createAccount = new CreateAccount();
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String result = createAccountControllers.creatingAccount(createAccount, bindingResult);
+
+        assertThat(result).isEqualTo("redirect:/account/create");
     }
 }

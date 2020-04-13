@@ -8,6 +8,7 @@ import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.repositories.BankAccountRepository;
 import com.paymybuddy.transferapps.repositories.RelativeEmailRepository;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,20 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class AddBankAccountTestIT {
-
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-
-    @Autowired
-    private MockMvc mvc;
+public class AddBankAccountTestIT extends AbstractIT{
 
     private UserAccount account = new UserAccount();
 
@@ -57,7 +45,7 @@ public class AddBankAccountTestIT {
     }
 
     @Test
-    public void fillFriendFormWithSuccess() throws Exception {
+    public void fillBankFormWithSuccess() throws Exception {
         mvc.perform(get("/userHome/bankAccount/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("accountName", "account1")

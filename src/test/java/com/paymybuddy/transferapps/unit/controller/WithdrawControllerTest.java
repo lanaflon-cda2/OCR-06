@@ -1,109 +1,59 @@
 package com.paymybuddy.transferapps.unit.controller;
 
 
-import com.paymybuddy.transferapps.domain.BankAccount;
-import com.paymybuddy.transferapps.domain.UserAccount;
+import com.paymybuddy.transferapps.controllers.WithDrawMoneyControllers;
 import com.paymybuddy.transferapps.dto.Deposit;
-import com.paymybuddy.transferapps.repositories.BankAccountRepository;
-import com.paymybuddy.transferapps.repositories.TransactionRepository;
-import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class WithdrawControllerTest {
 
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
+    @Mock
+    private MoneyTransferService moneyTransferService;
+    @Mock
+    private Model model;
 
-    @Autowired
-    private MockMvc mvc;
 
-    private UserAccount account = new UserAccount();
-    private BankAccount bankAccount = new BankAccount();
-
-    @BeforeEach
-    public void setup() {
-        account.setEmail("test@test.com");
-        account.setName("user");
-        account.setPassword("password");
-        account.setRole("ADMIN");
-        account.setMoneyAmount(50);
-        userAccountRepository.save(account);
-        bankAccount.setAccountIban("5555");
-        bankAccount.setAccountName("myAccount");
-        bankAccount.setEmail("test@test.com");
-        bankAccountRepository.save(bankAccount);
-
-    }
-
+    @InjectMocks
+    WithDrawMoneyControllers withDrawMoneyControllers = new WithDrawMoneyControllers();
 
     @Test
-    public void accessWithdrawFormWithSuccess() throws Exception {
-        mvc.perform(get("/userHome/withdrawMoney/withdraw")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("amount", "50")
-                .content("amount")
-                .sessionAttr("dto", new Deposit())
-        )
-                .andExpect(status().isOk())
-                .andExpect(view().name("withdrawMoney"));
+    public void withdrawControllers() {
+        String result = withDrawMoneyControllers.withdrawMoney(model);
+        verify(model, (times(1))).addAttribute(eq("withdrawMoney"), ArgumentMatchers.any());
+        verify(model, (times(1))).addAttribute(eq("bankAccounts"), ArgumentMatchers.any());
+
+        assertThat(result).isEqualTo("withdrawMoney");
     }
 
     @Test
-    public void withdrawMoneyWithSuccess() throws Exception {
-        Deposit withdraw = new Deposit();
-        withdraw.setAccountName("myAccount");
-        withdraw.setDescription("a description");
-        mvc.perform(post("/userHome/withdrawMoney/withdrawing")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",withdraw.getAccountName())
-                .param("description",withdraw.getDescription())
-                .param("amount", "20.00")
-                .requestAttr("withdraw", withdraw)
-                .contentType(MediaType.APPLICATION_XHTML_XML)
-        )
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/userHome"));
+    public void withdrawingReturnGoodURL() {
+        Deposit deposit= new Deposit();
+        when(moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(any())).thenReturn(true);
+        String result = withDrawMoneyControllers.withdrawing(deposit);
+        assertThat(result).isEqualTo("redirect:/userHome");
     }
 
     @Test
-    public void returnErrorIfMoneyAmountBreakTheMaximumAmountPossible() throws Exception {
-        Deposit withdraw = new Deposit();
-        withdraw.setAccountName("myAccount");
-        mvc.perform(post("/userHome/withdrawMoney/withdrawing")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",withdraw.getAccountName())
-                .param("description",withdraw.getDescription())
-                .param("amount", "11000.00")
-                .requestAttr("withdraw", withdraw)
-                .contentType(MediaType.APPLICATION_XHTML_XML)
-        )
-                .andExpect(status().isFound())
-                .andExpect(status().is3xxRedirection());
+    public void withdrawingReturnGoodURLWhenWrong() {
+        Deposit deposit= new Deposit();
+        when(moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(any())).thenReturn(false);
+        String result = withDrawMoneyControllers.withdrawing(deposit);
+        assertThat(result).isEqualTo("redirect:/userHome/withdrawMoney/withdraw");
     }
 }

@@ -26,7 +26,7 @@ public class Transaction {
     String description;
     @Column(nullable = false)
     double amount;
-    @Column(nullable = false)
+    @Column()
     String email;
     @Column(nullable = false)
     String relativeEmail;

@@ -30,10 +30,7 @@ public class MoneyTransferService {
     public boolean addABankAccount(BankAccount bankAccount) {
         // TODO: create a service in order to verify the IBAN
         if (bankAccountRepository.findByAccountIban(bankAccount.getAccountIban()).isEmpty()) {
-            bankAccount.setEmail(userAccountRepository.findByEmail(
-                    MyAppUserDetailsService.currentUserEmail()
-            )
-                    .get().getEmail());
+            bankAccount.setEmail(MyAppUserDetailsService.currentUserEmail());
             bankAccountRepository.save(bankAccount);
             return true;
         } else {
@@ -42,7 +39,7 @@ public class MoneyTransferService {
         }
     }
 
-    public void withDrawMoneyFromBankAndAddOnTheAccount(Deposit deposit) {
+    public boolean withDrawMoneyFromBankAndAddOnTheAccount(Deposit deposit) {
         //TODO: make contact with the bank to have permission to withdraw
         UserAccount userAccount = userAccountRepository.findByEmail(
                 MyAppUserDetailsService.currentUserEmail()
@@ -60,12 +57,14 @@ public class MoneyTransferService {
                     Timestamp.from(Instant.now()),
                     0.0);
             transactionRepository.save(transaction);
+            return true;
         } else {
             log.error("You have too much money on your account");
+            return false;
         }
     }
 
-    public void depositMoneyToBankAccount(Deposit deposit) {
+    public boolean depositMoneyToBankAccount(Deposit deposit) {
         UserAccount userAccount = userAccountRepository.findByEmail(
                 MyAppUserDetailsService.currentUserEmail()
         )
@@ -83,8 +82,10 @@ public class MoneyTransferService {
                     Timestamp.from(Instant.now()),
                     0.0);
             transactionRepository.save(transaction);
+            return true;
         } else {
             log.error("Not enough money on your account");
+            return false;
         }
     }
 

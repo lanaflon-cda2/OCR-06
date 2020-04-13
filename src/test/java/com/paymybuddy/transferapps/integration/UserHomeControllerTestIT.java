@@ -1,8 +1,10 @@
 package com.paymybuddy.transferapps.integration;
 
 
+import com.paymybuddy.transferapps.domain.RelationEmail;
 import com.paymybuddy.transferapps.domain.UserAccount;
 import com.paymybuddy.transferapps.repositories.UserAccountRepository;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,23 +35,15 @@ import org.springframework.web.context.WebApplicationContext;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.fr")
-@AutoConfigureMockMvc
-public class UserHomeControllerTestIT {
 
-    @Autowired
-    private UserAccountRepository userAccountRepository;
+public class UserHomeControllerTestIT extends AbstractIT {
 
-    @Autowired
-    private MockMvc mvc;
 
     private UserAccount account = new UserAccount();
 
     @BeforeEach
     public void setup() {
-        account.setEmail("test@test.fr");
+        account.setEmail("test@test.com");
         account.setName("user");
         account.setPassword("password");
         account.setRole("ADMIN");
@@ -57,8 +51,9 @@ public class UserHomeControllerTestIT {
     }
 
     @Test
-    public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
-        mvc.perform(get("/userHome").contentType(MediaType.TEXT_HTML)
+    public void getUserPage() throws Exception {
+        mvc.perform(get("/userHome")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         )
                 .andExpect(status().isOk())
                 .andExpect(view().name("UserPage"));

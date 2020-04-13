@@ -32,20 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer.sharedHttpSession;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class AddRelativeControllerTestIT {
-
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-    @Autowired
-    private RelativeEmailRepository relativeEmailRepository;
-
-    @Autowired
-    private MockMvc mvc;
+public class AddRelativeControllerTestIT extends AbstractIT{
 
     private UserAccount account = new UserAccount();
     private UserAccount relationAccount = new UserAccount();

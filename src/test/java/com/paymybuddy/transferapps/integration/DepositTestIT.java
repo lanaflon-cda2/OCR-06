@@ -31,22 +31,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class DepositTestIT {
 
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
+public class DepositTestIT extends AbstractIT{
 
-    @Autowired
-    private MockMvc mvc;
 
     private UserAccount account = new UserAccount();
     private BankAccount bankAccount = new BankAccount();

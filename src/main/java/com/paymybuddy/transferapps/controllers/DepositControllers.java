@@ -26,7 +26,9 @@ public class DepositControllers {
 
     @PostMapping(value = "/userHome/depositMoney/depositing")
     public String depositing( Deposit deposit) {
-        moneyTransferService.depositMoneyToBankAccount(deposit);
-        return "redirect:/userHome";
+        if(moneyTransferService.depositMoneyToBankAccount(deposit)) {
+            return "redirect:/userHome";
+        }
+        return "redirect:/userHome/depositMoney/deposit";
     }
 }

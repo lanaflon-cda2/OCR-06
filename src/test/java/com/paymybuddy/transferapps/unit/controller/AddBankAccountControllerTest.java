@@ -1,61 +1,49 @@
 package com.paymybuddy.transferapps.unit.controller;
 
+import com.paymybuddy.transferapps.controllers.AddBankAccountControllers;
 import com.paymybuddy.transferapps.domain.BankAccount;
-import com.paymybuddy.transferapps.domain.UserAccount;
-import com.paymybuddy.transferapps.repositories.UserAccountRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.paymybuddy.transferapps.service.MoneyTransferService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
+
 public class AddBankAccountControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
-    @Autowired
-    private UserAccountRepository userAccountRepository;
+    @Mock
+    private MoneyTransferService moneyTransferService;
+    @Mock
+    private Model model;
 
-    private UserAccount account = new UserAccount();
-
-    @BeforeEach
-    public void setup() {
-        account.setEmail("test@test.com");
-        account.setName("user");
-        account.setPassword("password");
-        account.setRole("ADMIN");
-        userAccountRepository.save(account);
-    }
-
-
+    @InjectMocks
+    AddBankAccountControllers addBankAccountControllers = new AddBankAccountControllers();
 
     @Test
-    public void addingBankAccountController() throws Exception {
+    public void fillFriendFormWithSuccess() {
+
+        String result = addBankAccountControllers.addABankAccountToYourList(model);
+        verify(model, (times(1))).addAttribute(eq("bankAccount"), any());
+
+        assertThat(result).isEqualTo("bankAccountAdd");
+    }
+    @Test
+    public void addingBankAccountController() {
+        when(moneyTransferService.addABankAccount(any())).thenReturn(true);
+
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountName("account1");
         bankAccount.setAccountIban("555444888");
-        mvc.perform(post("/userHome/bankAccount/adding")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("accountName",bankAccount.getAccountName())
-                .param("accountIban",bankAccount.getAccountIban())
-                .param("email", bankAccount.getEmail())
-                .requestAttr("bankAccount", bankAccount)
-                .contentType(MediaType.APPLICATION_XHTML_XML)
-        )
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/userHome"));
+        String result = addBankAccountControllers.addingABankAccount(bankAccount);
+
+        assertThat(result).isEqualTo("redirect:/userHome");
     }
 }

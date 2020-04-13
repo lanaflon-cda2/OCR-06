@@ -15,7 +15,7 @@ public class RelationEmail {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column()
     String email;
     @Column(nullable = false)
     String relativeEmail;

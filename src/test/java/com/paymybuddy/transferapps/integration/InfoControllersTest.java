@@ -31,19 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class InfoControllersTest {
+public class InfoControllersTest extends AbstractIT{
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
 
     private UserAccount account = new UserAccount();
     private Transaction transaction = new Transaction();
@@ -66,7 +55,7 @@ public class InfoControllersTest {
 
     @Test
     public void userAccountInfoControllers() throws Exception {
-        this.mockMvc.perform(get("/userHome/profile"))
+        mvc.perform(get("/userHome/profile"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("userAccount", any(UserAccount.class)))
                 .andExpect(model().attribute("relatives",  any(ArrayList.class)))

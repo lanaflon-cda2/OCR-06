@@ -16,7 +16,7 @@ public class BankAccount {
     String accountIban;
     @Column(nullable = false)
     String accountName;
-    @Column(nullable = false)
+    @Column()
     String email;
 
 

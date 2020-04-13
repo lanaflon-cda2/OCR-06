@@ -27,16 +27,16 @@ public class UserAccount {
     @Column(nullable = false)
     String role;
 
-    @OneToMany
-    @JoinColumn(name = "email")
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinColumn(name = "email", referencedColumnName="email")
     private Set<BankAccount> bankAccounts;
 
-    @OneToMany
-    @JoinColumn(name = "email")
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinColumn(name = "email", referencedColumnName="email")
     private Set<Transaction> transactions;
 
-    @OneToMany
-    @JoinColumn(name = "email")
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinColumn(name = "email", referencedColumnName="email")
     private Set<RelationEmail> relationEmails;
 
 

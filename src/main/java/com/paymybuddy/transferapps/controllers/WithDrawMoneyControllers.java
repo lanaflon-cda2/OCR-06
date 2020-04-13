@@ -26,8 +26,9 @@ public class WithDrawMoneyControllers {
 
     @PostMapping(value = "/userHome/withdrawMoney/withdrawing")
     public String withdrawing(Deposit deposit) {
-        moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(deposit);
-        return "redirect:/userHome";
-
+        if(moneyTransferService.withDrawMoneyFromBankAndAddOnTheAccount(deposit)) {
+            return "redirect:/userHome";
+        }
+        return "redirect:/userHome/withdrawMoney/withdraw";
     }
 }

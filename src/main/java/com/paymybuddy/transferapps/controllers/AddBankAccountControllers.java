@@ -29,7 +29,7 @@ public class AddBankAccountControllers {
 
     @PostMapping(value = "/userHome/bankAccount/adding")
     public String addingABankAccount( BankAccount bankAccount) {
-        if (moneyTransferService.addABankAccount(bankAccount) == false) {
+        if (!moneyTransferService.addABankAccount(bankAccount)) {
             return "redirect:/userHome/bankAccount/add";
         }
         return "redirect:/userHome";

@@ -33,22 +33,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ADMIN", username = "test@test.com")
-@AutoConfigureMockMvc(addFilters = false)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class SendMoneyTestIT {
 
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private RelativeEmailRepository relativeEmailRepository;
+public class SendMoneyTestIT extends AbstractIT{
 
-    @Autowired
-    private MockMvc mvc;
+
 
     private UserAccount account = new UserAccount();
     private UserAccount account2 = new UserAccount();
