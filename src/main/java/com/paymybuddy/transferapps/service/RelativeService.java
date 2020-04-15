@@ -16,6 +16,10 @@ import java.util.Optional;
 @Slf4j
 public class RelativeService {
 
+    /**
+     * -addAFriend(relationEmail) links two userAccount in order to allow both to send money each other
+     * -getRelatives() git a list of emails corresponding to all UserAccount linked to the current UserAccount
+     */
 
     @Autowired
     private RelativeEmailRepository relativeEmailRepository;

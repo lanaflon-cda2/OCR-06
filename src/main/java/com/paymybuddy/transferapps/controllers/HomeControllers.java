@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * -the root of the url give link to login or create an account
+ * -userHome url is the main page of connected users
+ */
 
 @Controller
 public class HomeControllers {

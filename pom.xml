@@ -172,9 +172,9 @@
 				<configuration>
 					<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 					<excludes>
-						<exclude>**/com.safetynet.safetynetalert/domain/*</exclude>
-						<exclude>**/com.safetynet.safetynetalert/controllers/htmlcontrollers/*</exclude>
-						<exclude>**/boot/SafetyNetAlertApplication.*</exclude>
+						<exclude>**/com/paymybuddy/transferapps/domain/**/*</exclude>
+						<exclude>**/com/paymybuddy/transferapps/dto/**/*</exclude>
+						<exclude>**/com/paymybuddy/transferapps/TransferappsApplication.*</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -235,9 +235,7 @@
 				<configuration>
 					<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 					<excludes>
-						<exclude>**/com/paymybuddy/transferapps/domain/**/*</exclude>
-						<exclude>**/com/paymybuddy/transferapps/dto/**/*</exclude>
-						<exclude>**/com/paymybuddy/transferapps/TransferappsApplication.*</exclude>
+
 					</excludes>
 				</configuration>
 				<reportSets>

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Deposist is the action of sending the money which is on the account to the selected bank belonging to the user
+ */
 
 @Controller
 public class DepositControllers {

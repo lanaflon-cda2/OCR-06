@@ -98,7 +98,7 @@ public class SendMoneyTestIT extends AbstractIT{
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/transfer"));
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(30);
@@ -120,7 +120,7 @@ public class SendMoneyTestIT extends AbstractIT{
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/transfer"));
+                .andExpect(view().name("redirect:/userHome/transfer"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(50);
@@ -140,7 +140,7 @@ public class SendMoneyTestIT extends AbstractIT{
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/transfer"));
+                .andExpect(view().name("redirect:/userHome/transfer"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(50);
@@ -161,7 +161,7 @@ public class SendMoneyTestIT extends AbstractIT{
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/transfer"));
+                .andExpect(view().name("redirect:/userHome/transfer"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(50);
@@ -183,7 +183,7 @@ public class SendMoneyTestIT extends AbstractIT{
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/transfer"));
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(bankAccountRepository.findByEmail("test@test.com")).hasSize(1);
         assertThat(bankAccountRepository.findByAccountIban("5555")).isPresent();
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(30);
@@ -198,7 +198,7 @@ public class SendMoneyTestIT extends AbstractIT{
                 .contentType(MediaType.APPLICATION_XHTML_XML)
         )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/transfer"));
+                .andExpect(view().name("redirect:/userHome"));
         assertThat(userAccountRepository.findByEmail("test@test.com").get().getMoneyAmount()).isEqualTo(10);
     }
 }

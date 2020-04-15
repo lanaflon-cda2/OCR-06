@@ -10,6 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * A friend or relative is a user of the application whose the current user added to his friendlist
+ * Only friends/relatives can send money to each other
+ */
 
 @Controller
 public class AddfriendControllers {

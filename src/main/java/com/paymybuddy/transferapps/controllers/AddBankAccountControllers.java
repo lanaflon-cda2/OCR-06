@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+/**
+ * The user can registered one or many bank accounts in order to withdraw or deposit some money
+ */
 
 @Controller
 public class AddBankAccountControllers {

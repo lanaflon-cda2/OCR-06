@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * profile page give information about the user and give the possibility to add a bank account
+ */
 
 @Controller
 public class TransferControllers {
@@ -30,7 +33,9 @@ public class TransferControllers {
 
     @PostMapping(value = "/userHome/sendMoney/sending")
     public String sending(SendMoney sendMoney) {
-        moneyTransferService.sendMoneyToARelative(sendMoney);
-        return "redirect:/transfer";
+        if(!moneyTransferService.sendMoneyToARelative(sendMoney)){
+            return "redirect:/userHome/transfer";
+        };
+        return "redirect:/userHome";
     }
 }

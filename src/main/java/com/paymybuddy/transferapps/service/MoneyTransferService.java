@@ -10,11 +10,16 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+
+/**
+ * -addABankAccount(BankAccount) link a bankAccount IBAN to the userAccount in order to withdrawing and depositing money
+ * -withDrawMoneyFromBankAndAddOnTheAccount(Deposit) withdraw money from a bank account to the userAccount
+ * -depositMoneyToBankAccount(Deposit) deposit money from userAccount to a bank account
+ * -sendMoneyToARelative(SendMoney) send money from the current User account to a relative of the User with 5% tax
+ */
+
 
 @Service
 @Slf4j
@@ -89,7 +94,7 @@ public class MoneyTransferService {
         }
     }
 
-    public void sendMoneyToARelative(SendMoney sendMoney) {
+    public boolean sendMoneyToARelative(SendMoney sendMoney) {
         UserAccount userAccount = userAccountRepository.findByEmail(
                 MyAppUserDetailsService.currentUserEmail()
         )
@@ -100,15 +105,15 @@ public class MoneyTransferService {
         if (userAccount.getMoneyAmount() > sendMoney.getAmount()) {
             if (userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).isPresent()) {
                 UserAccount relativeUserAccount = userAccountRepository.findByEmail(sendMoney.getRelativeEmail()).get();
-                if (relativeUserAccount.getMoneyAmount() + amount/100 <= 10000) {
-                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - amount/100);
+                if (relativeUserAccount.getMoneyAmount() + amount / 100 <= 10000) {
+                    userAccount.setMoneyAmount(userAccount.getMoneyAmount() - amount / 100);
                     userAccountRepository.save(userAccount);
                     //credit the account of the receiver
-                    relativeUserAccount.setMoneyAmount(relativeUserAccount.getMoneyAmount() + amount/100);
+                    relativeUserAccount.setMoneyAmount(relativeUserAccount.getMoneyAmount() + amount / 100);
                     userAccountRepository.save(relativeUserAccount);
                     //debit the account 5% of the amount of the transaction  and deposit on the account of the company PayMyBuddy
                     //TODO: make contact with the bank in order to complete the transaction
-                    userAccount.setMoneyAmount((userAccount.getMoneyAmount()*100 - taxApps)/100);
+                    userAccount.setMoneyAmount((userAccount.getMoneyAmount() * 100 - taxApps) / 100);
                     userAccountRepository.save(userAccount);
                     //recording the transaction
                     Transaction transaction = new Transaction(
@@ -129,14 +134,18 @@ public class MoneyTransferService {
                             Timestamp.from(Instant.now()),
                             0);
                     transactionRepository.save(transactionInverse);
+                    return true;
                 } else {
                     log.error("The relative have too much money on his account");
+                    return false;
                 }
             } else {
                 log.error("This email is not recorded in our database");
+                return false;
             }
         } else {
             log.error("Not enough money on your account");
+            return false;
         }
     }
 

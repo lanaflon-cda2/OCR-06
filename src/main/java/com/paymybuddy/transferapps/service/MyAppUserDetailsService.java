@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * MyAppUserDetailsService methods are use to keep authitfication of the user during is navigation in the website
+ */
+
 @Service
 public class MyAppUserDetailsService implements UserDetailsService {
 

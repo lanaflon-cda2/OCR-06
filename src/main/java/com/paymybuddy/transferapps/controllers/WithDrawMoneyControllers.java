@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Withdrawing is the action of retrieving the money which is on a bank account to the current user account of the application
+ */
 
 @Controller
 public class WithDrawMoneyControllers {

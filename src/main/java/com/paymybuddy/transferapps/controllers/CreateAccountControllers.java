@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * A non-authetificated guest can just either logging, or create an account with email, name and password
+ */
 
 @Controller
 public class CreateAccountControllers {

@@ -9,6 +9,10 @@ import java.util.Arrays;
 
 public class PasswordConstraint implements ConstraintValidator<ValidPassword, String> {
 
+    /**
+     * -isValid() verify the password has at least 8 character
+     */
+
     @Override
     public void initialize(ValidPassword arg0) {
     }
